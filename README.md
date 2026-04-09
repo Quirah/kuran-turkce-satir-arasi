@@ -26,8 +26,8 @@ Arapca metinde herhangi bir kelimeye tiklayin, o kelimenin Turkce okunusunu hece
 - **Sure secim ekrani** — Arama destegi, son okunan sure badge'i
 - **Kelime kelime okunus** — Arapca kelimeye tikla, hecelenmis Turkce okunusu gor
 - **Iki bubble modu:**
-  - *Turkce okunusa gore:* Turkce okuyusta birlesen kelimeler tek bubble (ornek: bismillahir)
-  - *Arapca kelimeye gore:* Her Arapca kelime ayri bubble, sondaki `-` devam isareti (ornek: bis-mil-)
+  - *Turkce okunusa gore:* Vasl ile baglanan Arapca kelimeler tek bubble olarak gruplanir (ornek: rab-bil + a-le-min -> rabbilalemin)
+  - *Arapca kelimeye gore:* Her Arapca kelime ayri bubble, sondaki `-` bir sonraki kelimeye baglandigini gosterir (ornek: rab-bil-)
 - **Diyanet Isleri meali** — Her ayetin altinda Turkce meal
 - **3 tema:** Papirus, Deniz, Gece
 - **Arapca yazi boyutu ayari** — 8 kademe buyutme/kucultme
