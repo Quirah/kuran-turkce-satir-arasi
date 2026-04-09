@@ -19,6 +19,7 @@ function normalizeWBWSyllable(syl) {
   s = s.replace(/[ʹʻ]/g, "");
 
   // Protect digraphs before NFD decomposition
+  s = s.replace(/gh/g, "\x04");
   s = s.replace(/sh/g, "\x01");
   s = s.replace(/kh/g, "\x02");
   s = s.replace(/th/g, "\x03");
@@ -27,6 +28,7 @@ function normalizeWBWSyllable(syl) {
   s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   // Restore digraph placeholders as Turkish equivalents
+  s = s.replace(/\x04/g, "g"); // gh (غ) → g (matches Turkish ğ→g)
   s = s.replace(/\x01/g, "s"); // sh (ش) → s (matches Turkish ş→s)
   s = s.replace(/\x02/g, "h"); // kh (خ) → h
   s = s.replace(/\x03/g, "s"); // th (ث) → s
