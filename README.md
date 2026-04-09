@@ -1,8 +1,6 @@
 # Quran Word by Word Turkish
 
-Kur'an-i Kerim'i Arapca okuyamayanlar icin **kelime kelime Turkce okunus** uygulamasi.
-
-Herhangi bir Arapca kelimeye dokunun, o kelimenin Turkce okunusunu hecelenmis olarak gorun.
+Kur'an-i Kerim'in kelime kelime **hecelenmis Turkce okunusunu** ve **Diyanet mealini** gosteren acik kaynak Android uygulama.
 
 <p align="center">
   <img src="ss.jpg" alt="Uygulama ekran goruntusu" width="300">
