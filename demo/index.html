@@ -5,89 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kur'an Turkce Satir Arasi Transliterasyon</title>
   <style>
-    /* === Mahfuz-inspired Papyrus Theme === */
+    /* === Mahfuz Tema Sistemi (birebir) === */
     :root {
-      --bg: #f5efe0;
-      --bg-surface: #ece4d0;
-      --text: #2c2416;
-      --text-secondary: #7a6b52;
-      --accent: #8b6914;
-      --border: #d4c9ac;
-      --word-hover: rgba(139, 105, 20, 0.12);
-      --word-hover-text: #6b4c00;
-      --bubble-bg: #fffdf7;
-      --bubble-shadow: rgba(44, 36, 22, 0.12);
-      --font-arabic: "Scheherazade New", "Traditional Arabic", "Amiri", serif;
-      --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
-    }
-
-    [data-theme="night"] {
-      --bg: #0f0e0c;
-      --bg-surface: #1a1814;
-      --text: #f0ece4;
-      --text-secondary: #a09882;
-      --accent: #7aad4a;
-      --border: #2e2a22;
-      --word-hover: rgba(122, 173, 74, 0.15);
-      --word-hover-text: #a4d474;
-      --bubble-bg: #1e1c18;
-      --bubble-shadow: rgba(0, 0, 0, 0.3);
+      --color-bg: #f5efe0;
+      --color-surface: #ece4d0;
+      --color-text-primary: #2c2416;
+      --color-text-secondary: #7a6e5a;
+      --color-text-translation: #5c5040;
+      --color-border: #d9d0bc;
+      --color-accent: #8b6914;
+      --color-word-hover: rgba(139, 105, 20, 0.12);
+      --color-word-hover-text: #6b4c00;
+      --font-arabic: "Scheherazade New", "Traditional Arabic", serif;
+      --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
     }
 
     [data-theme="sea"] {
-      --bg: #eef3f2;
-      --bg-surface: #dce8e6;
-      --text: #1a2c28;
-      --text-secondary: #4a6b64;
-      --accent: #0d7377;
-      --border: #b8ccc8;
-      --word-hover: rgba(13, 115, 119, 0.12);
-      --word-hover-text: #0a5c5f;
-      --bubble-bg: #f5faf9;
-      --bubble-shadow: rgba(26, 44, 40, 0.1);
+      --color-bg: #eef3f2;
+      --color-surface: #e0eae6;
+      --color-text-primary: #1a2c28;
+      --color-text-secondary: #5a7a70;
+      --color-text-translation: #3d5c52;
+      --color-border: #c4d8d0;
+      --color-accent: #0d7377;
+      --color-word-hover: rgba(13, 115, 119, 0.12);
+      --color-word-hover-text: #065a5e;
+    }
+
+    [data-theme="night"] {
+      --color-bg: #0f0e0c;
+      --color-surface: #1a1814;
+      --color-text-primary: #f0ece4;
+      --color-text-secondary: #9a9080;
+      --color-text-translation: #c4bdb0;
+      --color-border: #2a2820;
+      --color-accent: #7aad4a;
+      --color-word-hover: rgba(122, 173, 74, 0.15);
+      --color-word-hover-text: #a4d470;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      line-height: 1.6;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-ui);
       min-height: 100vh;
     }
 
     /* === Header === */
     .header {
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 10px 20px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
     .header h1 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--color-accent);
       white-space: nowrap;
     }
 
     .header select {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
       border-radius: 6px;
       padding: 6px 10px;
-      font-size: 14px;
-      font-family: var(--font-body);
+      font-size: 13px;
+      font-family: var(--font-ui);
       cursor: pointer;
-      max-width: 280px;
+      min-width: 200px;
     }
+
+    .header select:focus { outline: 2px solid var(--color-accent); outline-offset: -1px; }
 
     .theme-buttons {
       margin-left: auto;
@@ -96,10 +94,9 @@
     }
 
     .theme-btn {
-      width: 24px;
-      height: 24px;
+      width: 22px; height: 22px;
       border-radius: 50%;
-      border: 2px solid var(--border);
+      border: 2px solid var(--color-border);
       cursor: pointer;
       transition: transform 0.15s;
     }
@@ -107,172 +104,161 @@
     .theme-btn[data-t="papyrus"] { background: #f5efe0; }
     .theme-btn[data-t="sea"] { background: #eef3f2; }
     .theme-btn[data-t="night"] { background: #0f0e0c; }
-    .theme-btn.active { border-color: var(--accent); border-width: 3px; }
+    .theme-btn.active { border-color: var(--color-accent); border-width: 2.5px; }
+
+    .github-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+    }
+    .github-link:hover { color: var(--color-accent); }
+    .github-link svg { width: 15px; height: 15px; fill: currentColor; }
 
     /* === Content === */
     .content {
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 24px 20px 80px;
+      padding: 20px 24px 80px;
     }
 
-    /* === Verse Block === */
+    /* === Verse Block (Mahfuz AyahBlock) === */
     .verse {
-      margin-bottom: 28px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+      border-bottom: 1px solid var(--color-border);
     }
+    .verse:last-child { border-bottom: none; }
 
-    .verse-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border: 1.5px solid var(--accent);
-      border-radius: 50%;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
-
-    /* === Word Row === */
-    .words {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+    /* === Arabic Text Line (RTL flowing, like Mahfuz) === */
+    .verse-arabic {
+      text-align: right;
       direction: rtl;
-      justify-content: center;
+      font-family: var(--font-arabic);
+      font-size: 1.8rem;
       line-height: 2.8;
     }
 
-    /* === Word Bubble === */
+    /* === Individual Word (inline, like Mahfuz WordTooltip) === */
     .word {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      border-radius: 6px;
-      padding: 4px 6px 2px;
-      transition: background 0.15s;
+      display: inline;
       position: relative;
+      border-radius: 3px;
+      padding: 0 0.08em;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
     }
 
     .word:hover {
-      background: var(--word-hover);
+      background: var(--color-word-hover);
+      color: var(--color-word-hover-text);
     }
 
-    .word-arabic {
-      font-family: var(--font-arabic);
-      font-size: 28px;
-      line-height: 1.6;
-      color: var(--text);
-      direction: rtl;
+    .word.active {
+      background: var(--color-accent);
+      color: var(--color-bg);
+      border-radius: 4px;
     }
 
-    .word-translit {
-      font-size: 12px;
-      font-style: italic;
-      color: var(--text-secondary);
-      line-height: 1.3;
-      margin-top: 2px;
-      direction: ltr;
-      white-space: nowrap;
+    /* === Verse Number Badge (inline, like Mahfuz) === */
+    .ayah-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--color-surface);
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      color: var(--color-text-secondary);
+      vertical-align: middle;
+      cursor: default;
+      transition: background 0.15s;
     }
+    .ayah-badge:hover { background: var(--color-border); }
 
-    .word-translit .syl {
-      color: var(--text-secondary);
-    }
-
-    .word-translit .syl-sep {
-      color: var(--border);
-      margin: 0 0.5px;
-    }
-
-    /* === Tooltip (click to expand) === */
-    .word-tooltip {
+    /* === Tooltip Bubble (like Mahfuz WordTooltip) === */
+    .tooltip {
       display: none;
       position: absolute;
-      bottom: calc(100% + 8px);
+      z-index: 50;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--bubble-bg);
-      border: 1px solid var(--border);
+      padding: 6px 12px;
       border-radius: 8px;
-      padding: 8px 12px;
-      box-shadow: 0 4px 12px var(--bubble-shadow);
-      z-index: 50;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       white-space: nowrap;
       direction: ltr;
+      pointer-events: none;
     }
 
-    .word-tooltip::after {
-      content: '';
+    .tooltip.show { display: block; }
+
+    /* Arrow */
+    .tooltip-arrow {
       position: absolute;
-      top: 100%;
+      width: 8px; height: 8px;
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      transform: translateX(-50%) rotate(45deg);
       left: 50%;
-      transform: translateX(-50%);
-      border: 6px solid transparent;
-      border-top-color: var(--border);
     }
+    .tooltip.pos-bottom { top: calc(100% + 8px); }
+    .tooltip.pos-bottom .tooltip-arrow { top: -5px; border-left: 1px solid; border-top: 1px solid; }
+    .tooltip.pos-top { bottom: calc(100% + 8px); }
+    .tooltip.pos-top .tooltip-arrow { bottom: -5px; border-right: 1px solid; border-bottom: 1px solid; }
 
-    .word.active .word-tooltip {
-      display: block;
-    }
-
-    .tooltip-translit {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--accent);
+    .tooltip-text {
+      font-size: 0.875rem;
+      font-family: serif;
       font-style: italic;
+      color: var(--color-text-primary);
+      position: relative;
+      z-index: 1;
     }
 
-    .tooltip-info {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 3px;
-    }
-
-    /* === Transliteration Full Line === */
-    .verse-translit-line {
+    /* === Transliteration line below verse === */
+    .verse-translit {
       direction: ltr;
-      text-align: center;
+      text-align: right;
       font-style: italic;
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-top: 8px;
-      line-height: 1.8;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+      line-height: 1.7;
+      font-family: serif;
     }
 
     /* === Loading === */
     .loading {
       text-align: center;
       padding: 60px 20px;
-      color: var(--text-secondary);
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+    .loading code {
+      display: inline-block;
+      margin-top: 8px;
+      background: var(--color-surface);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
     }
 
     /* === Responsive === */
     @media (max-width: 600px) {
-      .header { flex-wrap: wrap; gap: 8px; }
-      .header h1 { font-size: 14px; }
-      .header select { max-width: 100%; flex: 1; }
+      .header { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+      .header select { min-width: 0; flex: 1; }
       .theme-buttons { margin-left: 0; }
-      .word-arabic { font-size: 24px; }
-      .content { padding: 16px 12px 60px; }
+      .verse-arabic { font-size: 1.5rem; }
+      .content { padding: 12px 12px 60px; }
     }
-
-    /* === GitHub link === */
-    .github-link {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .github-link:hover { color: var(--accent); }
-    .github-link svg { width: 16px; height: 16px; fill: currentColor; }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
@@ -289,7 +275,6 @@
   </div>
   <a class="github-link" href="https://github.com/Quirah/kuran-turkce-satir-arasi" target="_blank">
     <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-    GitHub
   </a>
 </div>
 
@@ -298,150 +283,23 @@
 </div>
 
 <script>
-// === Surah metadata ===
-const surahMeta = [
-  null,
-  {id:1,arabic:'الفاتحة',name:'Fatiha',verses:7},
-  {id:2,arabic:'البقرة',name:'Bakara',verses:286},
-  {id:3,arabic:'آل عمران',name:'Al-i İmran',verses:200},
-  {id:4,arabic:'النساء',name:'Nisa',verses:176},
-  {id:5,arabic:'المائدة',name:'Maide',verses:120},
-  {id:6,arabic:'الأنعام',name:'En\'am',verses:165},
-  {id:7,arabic:'الأعراف',name:'A\'raf',verses:206},
-  {id:8,arabic:'الأنفال',name:'Enfal',verses:75},
-  {id:9,arabic:'التوبة',name:'Tevbe',verses:129},
-  {id:10,arabic:'يونس',name:'Yunus',verses:109},
-  {id:11,arabic:'هود',name:'Hud',verses:123},
-  {id:12,arabic:'يوسف',name:'Yusuf',verses:111},
-  {id:13,arabic:'الرعد',name:'Ra\'d',verses:43},
-  {id:14,arabic:'ابراهيم',name:'İbrahim',verses:52},
-  {id:15,arabic:'الحجر',name:'Hicr',verses:99},
-  {id:16,arabic:'النحل',name:'Nahl',verses:128},
-  {id:17,arabic:'الإسراء',name:'İsra',verses:111},
-  {id:18,arabic:'الكهف',name:'Kehf',verses:110},
-  {id:19,arabic:'مريم',name:'Meryem',verses:98},
-  {id:20,arabic:'طه',name:'Taha',verses:135},
-  {id:21,arabic:'الأنبياء',name:'Enbiya',verses:112},
-  {id:22,arabic:'الحج',name:'Hac',verses:78},
-  {id:23,arabic:'المؤمنون',name:'Mu\'minun',verses:118},
-  {id:24,arabic:'النور',name:'Nur',verses:64},
-  {id:25,arabic:'الفرقان',name:'Furkan',verses:77},
-  {id:26,arabic:'الشعراء',name:'Şuara',verses:227},
-  {id:27,arabic:'النمل',name:'Neml',verses:93},
-  {id:28,arabic:'القصص',name:'Kasas',verses:88},
-  {id:29,arabic:'العنكبوت',name:'Ankebut',verses:69},
-  {id:30,arabic:'الروم',name:'Rum',verses:60},
-  {id:31,arabic:'لقمان',name:'Lokman',verses:34},
-  {id:32,arabic:'السجدة',name:'Secde',verses:30},
-  {id:33,arabic:'الأحزاب',name:'Ahzab',verses:73},
-  {id:34,arabic:'سبإ',name:'Sebe',verses:54},
-  {id:35,arabic:'فاطر',name:'Fatır',verses:45},
-  {id:36,arabic:'يس',name:'Yasin',verses:83},
-  {id:37,arabic:'الصافات',name:'Saffat',verses:182},
-  {id:38,arabic:'ص',name:'Sad',verses:88},
-  {id:39,arabic:'الزمر',name:'Zumer',verses:75},
-  {id:40,arabic:'غافر',name:'Mu\'min',verses:85},
-  {id:41,arabic:'فصلت',name:'Fussilet',verses:54},
-  {id:42,arabic:'الشورى',name:'Şura',verses:53},
-  {id:43,arabic:'الزخرف',name:'Zuhruf',verses:89},
-  {id:44,arabic:'الدخان',name:'Duhan',verses:59},
-  {id:45,arabic:'الجاثية',name:'Casiye',verses:37},
-  {id:46,arabic:'الأحقاف',name:'Ahkaf',verses:35},
-  {id:47,arabic:'محمد',name:'Muhammed',verses:38},
-  {id:48,arabic:'الفتح',name:'Fetih',verses:29},
-  {id:49,arabic:'الحجرات',name:'Hucurat',verses:18},
-  {id:50,arabic:'ق',name:'Kaf',verses:45},
-  {id:51,arabic:'الذاريات',name:'Zariyat',verses:60},
-  {id:52,arabic:'الطور',name:'Tur',verses:49},
-  {id:53,arabic:'النجم',name:'Necm',verses:62},
-  {id:54,arabic:'القمر',name:'Kamer',verses:55},
-  {id:55,arabic:'الرحمن',name:'Rahman',verses:78},
-  {id:56,arabic:'الواقعة',name:'Vakıa',verses:96},
-  {id:57,arabic:'الحديد',name:'Hadid',verses:29},
-  {id:58,arabic:'المجادلة',name:'Mucadele',verses:22},
-  {id:59,arabic:'الحشر',name:'Haşr',verses:24},
-  {id:60,arabic:'الممتحنة',name:'Mumtehine',verses:13},
-  {id:61,arabic:'الصف',name:'Saf',verses:14},
-  {id:62,arabic:'الجمعة',name:'Cuma',verses:11},
-  {id:63,arabic:'المنافقون',name:'Munafikun',verses:11},
-  {id:64,arabic:'التغابن',name:'Tegabun',verses:18},
-  {id:65,arabic:'الطلاق',name:'Talak',verses:12},
-  {id:66,arabic:'التحريم',name:'Tahrim',verses:12},
-  {id:67,arabic:'الملك',name:'Mulk',verses:30},
-  {id:68,arabic:'القلم',name:'Kalem',verses:52},
-  {id:69,arabic:'الحاقة',name:'Hakka',verses:52},
-  {id:70,arabic:'المعارج',name:'Mearic',verses:44},
-  {id:71,arabic:'نوح',name:'Nuh',verses:28},
-  {id:72,arabic:'الجن',name:'Cin',verses:28},
-  {id:73,arabic:'المزمل',name:'Muzzemmil',verses:20},
-  {id:74,arabic:'المدثر',name:'Muddessir',verses:56},
-  {id:75,arabic:'القيامة',name:'Kıyame',verses:40},
-  {id:76,arabic:'الانسان',name:'İnsan',verses:31},
-  {id:77,arabic:'المرسلات',name:'Murselat',verses:50},
-  {id:78,arabic:'النبإ',name:'Nebe',verses:40},
-  {id:79,arabic:'النازعات',name:'Naziat',verses:46},
-  {id:80,arabic:'عبس',name:'Abese',verses:42},
-  {id:81,arabic:'التكوير',name:'Tekvir',verses:29},
-  {id:82,arabic:'الإنفطار',name:'İnfitar',verses:19},
-  {id:83,arabic:'المطففين',name:'Mutaffifin',verses:36},
-  {id:84,arabic:'الإنشقاق',name:'İnşikak',verses:25},
-  {id:85,arabic:'البروج',name:'Buruc',verses:22},
-  {id:86,arabic:'الطارق',name:'Tarık',verses:17},
-  {id:87,arabic:'الأعلى',name:'A\'la',verses:19},
-  {id:88,arabic:'الغاشية',name:'Gaşiye',verses:26},
-  {id:89,arabic:'الفجر',name:'Fecr',verses:30},
-  {id:90,arabic:'البلد',name:'Beled',verses:20},
-  {id:91,arabic:'الشمس',name:'Şems',verses:15},
-  {id:92,arabic:'الليل',name:'Leyl',verses:21},
-  {id:93,arabic:'الضحى',name:'Duha',verses:11},
-  {id:94,arabic:'الشرح',name:'İnşirah',verses:8},
-  {id:95,arabic:'التين',name:'Tin',verses:8},
-  {id:96,arabic:'العلق',name:'Alak',verses:19},
-  {id:97,arabic:'القدر',name:'Kadir',verses:5},
-  {id:98,arabic:'البينة',name:'Beyyine',verses:8},
-  {id:99,arabic:'الزلزلة',name:'Zilzal',verses:8},
-  {id:100,arabic:'العاديات',name:'Adiyat',verses:11},
-  {id:101,arabic:'القارعة',name:'Karia',verses:11},
-  {id:102,arabic:'التكاثر',name:'Tekasur',verses:8},
-  {id:103,arabic:'العصر',name:'Asr',verses:3},
-  {id:104,arabic:'الهمزة',name:'Humeze',verses:9},
-  {id:105,arabic:'الفيل',name:'Fil',verses:5},
-  {id:106,arabic:'قريش',name:'Kureyş',verses:4},
-  {id:107,arabic:'الماعون',name:'Maun',verses:7},
-  {id:108,arabic:'الكوثر',name:'Kevser',verses:3},
-  {id:109,arabic:'الكافرون',name:'Kafirun',verses:6},
-  {id:110,arabic:'النصر',name:'Nasr',verses:3},
-  {id:111,arabic:'المسد',name:'Tebbet',verses:5},
-  {id:112,arabic:'الإخلاص',name:'İhlas',verses:4},
-  {id:113,arabic:'الفلق',name:'Felak',verses:5},
-  {id:114,arabic:'الناس',name:'Nas',verses:6},
-];
+const surahMeta=[null,{id:1,arabic:'\u0627\u0644\u0641\u0627\u062a\u062d\u0629',name:'Fatiha',verses:7},{id:2,arabic:'\u0627\u0644\u0628\u0642\u0631\u0629',name:'Bakara',verses:286},{id:3,arabic:'\u0622\u0644 \u0639\u0645\u0631\u0627\u0646',name:'Al-i \u0130mran',verses:200},{id:4,arabic:'\u0627\u0644\u0646\u0633\u0627\u0621',name:'Nisa',verses:176},{id:5,arabic:'\u0627\u0644\u0645\u0627\u0626\u062f\u0629',name:'Maide',verses:120},{id:6,arabic:'\u0627\u0644\u0623\u0646\u0639\u0627\u0645',name:"En'am",verses:165},{id:7,arabic:'\u0627\u0644\u0623\u0639\u0631\u0627\u0641',name:"A'raf",verses:206},{id:8,arabic:'\u0627\u0644\u0623\u0646\u0641\u0627\u0644',name:'Enfal',verses:75},{id:9,arabic:'\u0627\u0644\u062a\u0648\u0628\u0629',name:'Tevbe',verses:129},{id:10,arabic:'\u064a\u0648\u0646\u0633',name:'Yunus',verses:109},{id:11,arabic:'\u0647\u0648\u062f',name:'Hud',verses:123},{id:12,arabic:'\u064a\u0648\u0633\u0641',name:'Yusuf',verses:111},{id:13,arabic:'\u0627\u0644\u0631\u0639\u062f',name:"Ra'd",verses:43},{id:14,arabic:'\u0627\u0628\u0631\u0627\u0647\u064a\u0645',name:'\u0130brahim',verses:52},{id:15,arabic:'\u0627\u0644\u062d\u062c\u0631',name:'Hicr',verses:99},{id:16,arabic:'\u0627\u0644\u0646\u062d\u0644',name:'Nahl',verses:128},{id:17,arabic:'\u0627\u0644\u0625\u0633\u0631\u0627\u0621',name:'\u0130sra',verses:111},{id:18,arabic:'\u0627\u0644\u0643\u0647\u0641',name:'Kehf',verses:110},{id:19,arabic:'\u0645\u0631\u064a\u0645',name:'Meryem',verses:98},{id:20,arabic:'\u0637\u0647',name:'Taha',verses:135},{id:21,arabic:'\u0627\u0644\u0623\u0646\u0628\u064a\u0627\u0621',name:'Enbiya',verses:112},{id:22,arabic:'\u0627\u0644\u062d\u062c',name:'Hac',verses:78},{id:23,arabic:'\u0627\u0644\u0645\u0624\u0645\u0646\u0648\u0646',name:"Mu'minun",verses:118},{id:24,arabic:'\u0627\u0644\u0646\u0648\u0631',name:'Nur',verses:64},{id:25,arabic:'\u0627\u0644\u0641\u0631\u0642\u0627\u0646',name:'Furkan',verses:77},{id:26,arabic:'\u0627\u0644\u0634\u0639\u0631\u0627\u0621',name:'\u015euara',verses:227},{id:27,arabic:'\u0627\u0644\u0646\u0645\u0644',name:'Neml',verses:93},{id:28,arabic:'\u0627\u0644\u0642\u0635\u0635',name:'Kasas',verses:88},{id:29,arabic:'\u0627\u0644\u0639\u0646\u0643\u0628\u0648\u062a',name:'Ankebut',verses:69},{id:30,arabic:'\u0627\u0644\u0631\u0648\u0645',name:'Rum',verses:60},{id:31,arabic:'\u0644\u0642\u0645\u0627\u0646',name:'Lokman',verses:34},{id:32,arabic:'\u0627\u0644\u0633\u062c\u062f\u0629',name:'Secde',verses:30},{id:33,arabic:'\u0627\u0644\u0623\u062d\u0632\u0627\u0628',name:'Ahzab',verses:73},{id:34,arabic:'\u0633\u0628\u0625',name:'Sebe',verses:54},{id:35,arabic:'\u0641\u0627\u0637\u0631',name:'Fat\u0131r',verses:45},{id:36,arabic:'\u064a\u0633',name:'Yasin',verses:83},{id:37,arabic:'\u0627\u0644\u0635\u0627\u0641\u0627\u062a',name:'Saffat',verses:182},{id:38,arabic:'\u0635',name:'Sad',verses:88},{id:39,arabic:'\u0627\u0644\u0632\u0645\u0631',name:'Zumer',verses:75},{id:40,arabic:'\u063a\u0627\u0641\u0631',name:"Mu'min",verses:85},{id:41,arabic:'\u0641\u0635\u0644\u062a',name:'Fussilet',verses:54},{id:42,arabic:'\u0627\u0644\u0634\u0648\u0631\u0649',name:'\u015eura',verses:53},{id:43,arabic:'\u0627\u0644\u0632\u062e\u0631\u0641',name:'Zuhruf',verses:89},{id:44,arabic:'\u0627\u0644\u062f\u062e\u0627\u0646',name:'Duhan',verses:59},{id:45,arabic:'\u0627\u0644\u062c\u0627\u062b\u064a\u0629',name:'Casiye',verses:37},{id:46,arabic:'\u0627\u0644\u0623\u062d\u0642\u0627\u0641',name:'Ahkaf',verses:35},{id:47,arabic:'\u0645\u062d\u0645\u062f',name:'Muhammed',verses:38},{id:48,arabic:'\u0627\u0644\u0641\u062a\u062d',name:'Fetih',verses:29},{id:49,arabic:'\u0627\u0644\u062d\u062c\u0631\u0627\u062a',name:'Hucurat',verses:18},{id:50,arabic:'\u0642',name:'Kaf',verses:45},{id:51,arabic:'\u0627\u0644\u0630\u0627\u0631\u064a\u0627\u062a',name:'Zariyat',verses:60},{id:52,arabic:'\u0627\u0644\u0637\u0648\u0631',name:'Tur',verses:49},{id:53,arabic:'\u0627\u0644\u0646\u062c\u0645',name:'Necm',verses:62},{id:54,arabic:'\u0627\u0644\u0642\u0645\u0631',name:'Kamer',verses:55},{id:55,arabic:'\u0627\u0644\u0631\u062d\u0645\u0646',name:'Rahman',verses:78},{id:56,arabic:'\u0627\u0644\u0648\u0627\u0642\u0639\u0629',name:'Vak\u0131a',verses:96},{id:57,arabic:'\u0627\u0644\u062d\u062f\u064a\u062f',name:'Hadid',verses:29},{id:58,arabic:'\u0627\u0644\u0645\u062c\u0627\u062f\u0644\u0629',name:'Mucadele',verses:22},{id:59,arabic:'\u0627\u0644\u062d\u0634\u0631',name:'Ha\u015fr',verses:24},{id:60,arabic:'\u0627\u0644\u0645\u0645\u062a\u062d\u0646\u0629',name:'Mumtehine',verses:13},{id:61,arabic:'\u0627\u0644\u0635\u0641',name:'Saf',verses:14},{id:62,arabic:'\u0627\u0644\u062c\u0645\u0639\u0629',name:'Cuma',verses:11},{id:63,arabic:'\u0627\u0644\u0645\u0646\u0627\u0641\u0642\u0648\u0646',name:'Munafikun',verses:11},{id:64,arabic:'\u0627\u0644\u062a\u063a\u0627\u0628\u0646',name:'Tegabun',verses:18},{id:65,arabic:'\u0627\u0644\u0637\u0644\u0627\u0642',name:'Talak',verses:12},{id:66,arabic:'\u0627\u0644\u062a\u062d\u0631\u064a\u0645',name:'Tahrim',verses:12},{id:67,arabic:'\u0627\u0644\u0645\u0644\u0643',name:'Mulk',verses:30},{id:68,arabic:'\u0627\u0644\u0642\u0644\u0645',name:'Kalem',verses:52},{id:69,arabic:'\u0627\u0644\u062d\u0627\u0642\u0629',name:'Hakka',verses:52},{id:70,arabic:'\u0627\u0644\u0645\u0639\u0627\u0631\u062c',name:'Mearic',verses:44},{id:71,arabic:'\u0646\u0648\u062d',name:'Nuh',verses:28},{id:72,arabic:'\u0627\u0644\u062c\u0646',name:'Cin',verses:28},{id:73,arabic:'\u0627\u0644\u0645\u0632\u0645\u0644',name:'Muzzemmil',verses:20},{id:74,arabic:'\u0627\u0644\u0645\u062f\u062b\u0631',name:'Muddessir',verses:56},{id:75,arabic:'\u0627\u0644\u0642\u064a\u0627\u0645\u0629',name:'K\u0131yame',verses:40},{id:76,arabic:'\u0627\u0644\u0627\u0646\u0633\u0627\u0646',name:'\u0130nsan',verses:31},{id:77,arabic:'\u0627\u0644\u0645\u0631\u0633\u0644\u0627\u062a',name:'Murselat',verses:50},{id:78,arabic:'\u0627\u0644\u0646\u0628\u0625',name:'Nebe',verses:40},{id:79,arabic:'\u0627\u0644\u0646\u0627\u0632\u0639\u0627\u062a',name:'Naziat',verses:46},{id:80,arabic:'\u0639\u0628\u0633',name:'Abese',verses:42},{id:81,arabic:'\u0627\u0644\u062a\u0643\u0648\u064a\u0631',name:'Tekvir',verses:29},{id:82,arabic:'\u0627\u0644\u0625\u0646\u0641\u0637\u0627\u0631',name:'\u0130nfitar',verses:19},{id:83,arabic:'\u0627\u0644\u0645\u0637\u0641\u0641\u064a\u0646',name:'Mutaffifin',verses:36},{id:84,arabic:'\u0627\u0644\u0625\u0646\u0634\u0642\u0627\u0642',name:'\u0130n\u015fikak',verses:25},{id:85,arabic:'\u0627\u0644\u0628\u0631\u0648\u062c',name:'Buruc',verses:22},{id:86,arabic:'\u0627\u0644\u0637\u0627\u0631\u0642',name:'Tar\u0131k',verses:17},{id:87,arabic:'\u0627\u0644\u0623\u0639\u0644\u0649',name:"A'la",verses:19},{id:88,arabic:'\u0627\u0644\u063a\u0627\u0634\u064a\u0629',name:'Ga\u015fiye',verses:26},{id:89,arabic:'\u0627\u0644\u0641\u062c\u0631',name:'Fecr',verses:30},{id:90,arabic:'\u0627\u0644\u0628\u0644\u062f',name:'Beled',verses:20},{id:91,arabic:'\u0627\u0644\u0634\u0645\u0633',name:'\u015eems',verses:15},{id:92,arabic:'\u0627\u0644\u0644\u064a\u0644',name:'Leyl',verses:21},{id:93,arabic:'\u0627\u0644\u0636\u062d\u0649',name:'Duha',verses:11},{id:94,arabic:'\u0627\u0644\u0634\u0631\u062d',name:'\u0130n\u015firah',verses:8},{id:95,arabic:'\u0627\u0644\u062a\u064a\u0646',name:'Tin',verses:8},{id:96,arabic:'\u0627\u0644\u0639\u0644\u0642',name:'Alak',verses:19},{id:97,arabic:'\u0627\u0644\u0642\u062f\u0631',name:'Kadir',verses:5},{id:98,arabic:'\u0627\u0644\u0628\u064a\u0646\u0629',name:'Beyyine',verses:8},{id:99,arabic:'\u0627\u0644\u0632\u0644\u0632\u0644\u0629',name:'Zilzal',verses:8},{id:100,arabic:'\u0627\u0644\u0639\u0627\u062f\u064a\u0627\u062a',name:'Adiyat',verses:11},{id:101,arabic:'\u0627\u0644\u0642\u0627\u0631\u0639\u0629',name:'Karia',verses:11},{id:102,arabic:'\u0627\u0644\u062a\u0643\u0627\u062b\u0631',name:'Tekasur',verses:8},{id:103,arabic:'\u0627\u0644\u0639\u0635\u0631',name:'Asr',verses:3},{id:104,arabic:'\u0627\u0644\u0647\u0645\u0632\u0629',name:'Humeze',verses:9},{id:105,arabic:'\u0627\u0644\u0641\u064a\u0644',name:'Fil',verses:5},{id:106,arabic:'\u0642\u0631\u064a\u0634',name:'Kurey\u015f',verses:4},{id:107,arabic:'\u0627\u0644\u0645\u0627\u0639\u0648\u0646',name:'Maun',verses:7},{id:108,arabic:'\u0627\u0644\u0643\u0648\u062b\u0631',name:'Kevser',verses:3},{id:109,arabic:'\u0627\u0644\u0643\u0627\u0641\u0631\u0648\u0646',name:'Kafirun',verses:6},{id:110,arabic:'\u0627\u0644\u0646\u0635\u0631',name:'Nasr',verses:3},{id:111,arabic:'\u0627\u0644\u0645\u0633\u062f',name:'Tebbet',verses:5},{id:112,arabic:'\u0627\u0644\u0625\u062e\u0644\u0627\u0635',name:'\u0130hlas',verses:4},{id:113,arabic:'\u0627\u0644\u0641\u0644\u0642',name:'Felak',verses:5},{id:114,arabic:'\u0627\u0644\u0646\u0627\u0633',name:'Nas',verses:6}];
 
-// === State ===
 let translitData = null;
 let arabicData = null;
 let currentSurah = 1;
 
-// === Load data ===
 async function loadData() {
   const [translitRes, arabicRes] = await Promise.all([
     fetch('../output/turkish-syllables.json'),
-    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani').then(r => r.json()),
+    fetch('../data/arabic-uthmani.json'),
   ]);
-
   translitData = await translitRes.json();
-
-  // Index Arabic text by "surah:ayah"
-  arabicData = {};
-  for (const ayah of arabicRes.data.surahs.flatMap(s => s.ayahs)) {
-    arabicData[`${ayah.surah.number}:${ayah.numberInSurah}`] = ayah.text;
-  }
-
+  arabicData = await arabicRes.json();
   populateSurahSelect();
   renderSurah(currentSurah);
 }
 
-// === Surah selector ===
 function populateSurahSelect() {
   const sel = document.getElementById('surahSelect');
   for (let i = 1; i <= 114; i++) {
@@ -457,152 +315,154 @@ function populateSurahSelect() {
   });
 }
 
-// === Group words by trailing dash (vasl) ===
+// Group words by trailing dash (vasl/connected words)
 function groupWords(arabicWords, translitWords) {
   if (!translitWords) return arabicWords.map((w, i) => ({
     arabic: [w], translit: '', indices: [i]
   }));
-
   const groups = [];
-  let currentArabic = [];
-  let currentTranslit = '';
-  let currentIndices = [];
-
+  let curAr = [], curTr = '', curIdx = [];
   for (let i = 0; i < translitWords.length; i++) {
     const tw = translitWords[i];
-    const aw = arabicWords[i] || '';
-
-    currentArabic.push(aw);
-    currentIndices.push(i);
-
-    // Check if this word ends with dash (connects to next)
-    if (tw.endsWith('-') && i < translitWords.length - 1) {
-      currentTranslit += tw;
-    } else {
-      currentTranslit += tw;
-      groups.push({
-        arabic: [...currentArabic],
-        translit: currentTranslit,
-        indices: [...currentIndices]
-      });
-      currentArabic = [];
-      currentTranslit = '';
-      currentIndices = [];
+    curAr.push(arabicWords[i] || '');
+    curIdx.push(i);
+    curTr += tw;
+    if (!tw.endsWith('-') || i === translitWords.length - 1) {
+      groups.push({ arabic: [...curAr], translit: curTr, indices: [...curIdx] });
+      curAr = []; curTr = ''; curIdx = [];
     }
   }
-
-  // Remaining
-  if (currentArabic.length > 0) {
-    groups.push({
-      arabic: currentArabic,
-      translit: currentTranslit,
-      indices: currentIndices
-    });
-  }
-
+  if (curAr.length) groups.push({ arabic: curAr, translit: curTr, indices: curIdx });
   return groups;
 }
 
-// === Format transliteration with styled syllables ===
-function formatTranslit(text) {
-  // Remove trailing connection dash for display, keep internal dashes as separators
-  let display = text.replace(/-$/, '');
-  // Split by dash, rejoin with styled separators
-  const parts = display.split('-');
-  return parts.map((p, i) =>
-    `<span class="syl">${p}</span>${i < parts.length - 1 ? '<span class="syl-sep">-</span>' : ''}`
-  ).join('');
+// Clean transliteration for tooltip display
+function cleanTranslit(text) {
+  return text.replace(/-/g, '').replace(/[.;]/g, '');
 }
 
-// === Render surah ===
+// Format transliteration with syllable styling for the line display
+function formatTranslitLine(words) {
+  return words.map(w => {
+    let d = w.replace(/[.;]/g, '');
+    // Remove trailing dash for display
+    if (d.endsWith('-')) d = d.slice(0, -1);
+    return d.replace(/-/g, '\u00b7'); // middle dot for syllable separator
+  }).join(' ');
+}
+
 function renderSurah(surahNum) {
   const content = document.getElementById('content');
   const meta = surahMeta[surahNum];
-
   let html = '';
 
   for (let v = 1; v <= meta.verses; v++) {
     const key = `${surahNum}:${v}`;
     const arabic = arabicData?.[key] || '';
     const translit = translitData?.[key] || [];
-
-    // Split Arabic text into words
     const arabicWords = arabic.split(/\s+/);
     const groups = groupWords(arabicWords, translit);
 
-    html += `<div class="verse">`;
-    html += `<div class="verse-number">${v}</div>`;
-    html += `<div class="words">`;
+    html += '<div class="verse">';
 
+    // Arabic text line — RTL flowing inline like Mahfuz
+    html += '<div class="verse-arabic">';
     for (const group of groups) {
-      const arabicText = group.arabic.join(' ');
-      const translitText = group.translit;
-      const cleanTranslit = translitText.replace(/-/g, '').replace(/[.;]/g, '');
+      const arText = group.arabic.join(' ');
+      const trText = group.translit;
+      const clean = cleanTranslit(trText);
+      html += `<span class="word" data-translit="${clean.replace(/"/g, '&quot;')}">${arText}</span> `;
+    }
+    // Ayah number badge inline at end of verse (Mahfuz style)
+    html += `<span class="ayah-badge">${v}</span>`;
+    html += '</div>';
 
-      html += `<div class="word" onclick="toggleWord(this)">`;
-      html += `<span class="word-arabic">${arabicText}</span>`;
-      html += `<span class="word-translit">${formatTranslit(translitText)}</span>`;
-      if (cleanTranslit) {
-        html += `<div class="word-tooltip">`;
-        html += `<div class="tooltip-translit">${cleanTranslit}</div>`;
-        html += `<div class="tooltip-info">${group.arabic.length} kelime</div>`;
-        html += `</div>`;
-      }
-      html += `</div>`;
+    // Transliteration line below
+    if (translit.length) {
+      html += `<div class="verse-translit">${formatTranslitLine(translit)}</div>`;
     }
 
-    html += `</div>`; // .words
-
-    // Full transliteration line
-    const fullTranslit = translit.join(' ').replace(/-/g, ' ').replace(/\s+/g, ' ').replace(/[.;]/g, '').trim();
-    if (fullTranslit) {
-      html += `<div class="verse-translit-line">${fullTranslit}</div>`;
-    }
-
-    html += `</div>`; // .verse
+    html += '</div>';
   }
 
   content.innerHTML = html;
   window.scrollTo(0, 0);
+
+  // Attach word click handlers
+  content.querySelectorAll('.word').forEach(el => {
+    el.addEventListener('click', handleWordClick);
+  });
 }
 
-// === Word interaction ===
-function toggleWord(el) {
-  const wasActive = el.classList.contains('active');
-  document.querySelectorAll('.word.active').forEach(w => w.classList.remove('active'));
-  if (!wasActive) el.classList.add('active');
+// === Tooltip logic (like Mahfuz WordTooltip) ===
+let activeTooltip = null;
+
+function handleWordClick(e) {
+  const word = e.currentTarget;
+  const translit = word.dataset.translit;
+  if (!translit) return;
+
+  // Close existing
+  closeTooltip();
+
+  // Create tooltip
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tooltip';
+
+  const arrow = document.createElement('div');
+  arrow.className = 'tooltip-arrow';
+  tooltip.appendChild(arrow);
+
+  const text = document.createElement('div');
+  text.className = 'tooltip-text';
+  text.textContent = translit;
+  tooltip.appendChild(text);
+
+  word.appendChild(tooltip);
+  word.classList.add('active');
+
+  // Position: check space below
+  const rect = word.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - rect.bottom;
+  if (spaceBelow < 80 && rect.top > 80) {
+    tooltip.classList.add('pos-top', 'show');
+  } else {
+    tooltip.classList.add('pos-bottom', 'show');
+  }
+
+  activeTooltip = { tooltip, word };
+}
+
+function closeTooltip() {
+  if (activeTooltip) {
+    activeTooltip.tooltip.remove();
+    activeTooltip.word.classList.remove('active');
+    activeTooltip = null;
+  }
 }
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.word')) {
-    document.querySelectorAll('.word.active').forEach(w => w.classList.remove('active'));
-  }
+  if (activeTooltip && !e.target.closest('.word')) closeTooltip();
 });
-
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.word.active').forEach(w => w.classList.remove('active'));
-  }
+  if (e.key === 'Escape') closeTooltip();
 });
 
-// === Theme switching ===
+// === Theme ===
 document.querySelectorAll('.theme-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const theme = btn.dataset.t;
-    if (theme === 'papyrus') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', theme);
-    }
+    if (theme === 'papyrus') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', theme);
     document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   });
 });
 
 // === Init ===
-loadData().catch(err => {
+loadData().catch(() => {
   document.getElementById('content').innerHTML =
-    `<div class="loading">Veri yuklenemedi. Lütfen bir HTTP sunucusu uzerinden acin.<br><code>npx serve .</code></div>`;
+    '<div class="loading">Veri yuklenemedi. Lutfen bir HTTP sunucusu uzerinden acin.<br><code>npx serve .</code></div>';
 });
 </script>
 
