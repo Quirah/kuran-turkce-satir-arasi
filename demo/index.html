@@ -223,16 +223,19 @@
       z-index: 1;
     }
 
-    /* === Transliteration line below verse === */
-    .verse-translit {
+    /* === Translation (meal) below verse === */
+    .verse-translation {
       direction: ltr;
-      text-align: right;
-      font-style: italic;
-      font-size: 0.8rem;
-      color: var(--color-text-secondary);
-      margin-top: 2px;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--color-text-translation);
+      margin-top: 4px;
       line-height: 1.7;
-      font-family: serif;
+    }
+    .verse-translation .ayah-num {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      margin-right: 4px;
     }
 
     /* === Loading === */
@@ -287,15 +290,18 @@ const surahMeta=[null,{id:1,arabic:'\u0627\u0644\u0641\u0627\u062a\u062d\u0629',
 
 let translitData = null;
 let arabicData = null;
+let mealData = null;
 let currentSurah = 1;
 
 async function loadData() {
-  const [translitRes, arabicRes] = await Promise.all([
+  const [translitRes, arabicRes, mealRes] = await Promise.all([
     fetch('../output/turkish-syllables.json'),
     fetch('../data/arabic-uthmani.json'),
+    fetch('../data/diyanet-meal.json'),
   ]);
   translitData = await translitRes.json();
   arabicData = await arabicRes.json();
+  mealData = await mealRes.json();
   populateSurahSelect();
   renderSurah(currentSurah);
 }
@@ -341,16 +347,6 @@ function cleanTranslit(text) {
   return text.replace(/-/g, '').replace(/[.;]/g, '');
 }
 
-// Format transliteration with syllable styling for the line display
-function formatTranslitLine(words) {
-  return words.map(w => {
-    let d = w.replace(/[.;]/g, '');
-    // Remove trailing dash for display
-    if (d.endsWith('-')) d = d.slice(0, -1);
-    return d.replace(/-/g, '\u00b7'); // middle dot for syllable separator
-  }).join(' ');
-}
-
 function renderSurah(surahNum) {
   const content = document.getElementById('content');
   const meta = surahMeta[surahNum];
@@ -377,9 +373,10 @@ function renderSurah(surahNum) {
     html += `<span class="ayah-badge">${v}</span>`;
     html += '</div>';
 
-    // Transliteration line below
-    if (translit.length) {
-      html += `<div class="verse-translit">${formatTranslitLine(translit)}</div>`;
+    // Translation (meal) below
+    const meal = mealData?.[key];
+    if (meal) {
+      html += `<div class="verse-translation"><span class="ayah-num">${v}.</span>${meal}</div>`;
     }
 
     html += '</div>';
