@@ -1,58 +1,84 @@
-# Kur'an Türkçe Satır Arası Transliterasyon
+# Kur'an Türkçe Satır Arası
 
-Kur'an-ı Kerim'in **kelime kelime, heceli Türkçe transliterasyonu**.
+Kur'an-ı Kerim için **kelime kelime Türkçe okunuş** (transliterasyon) ve **meal** gösteren açık kaynak proje.
 
-İki açık kaynak veriyi birleştirerek üretilmiştir:
+Arapça metinde herhangi bir kelimeye tıklayın, o kelimenin Türkçe okunuşunu hecelenmiş olarak görün.
 
-| Kaynak | Ne sağlıyor | Lisans |
-|--------|-------------|--------|
-| [QuranWBW](https://quranwbw.com) | Kelime-kelime hece yapısı (Arapça kelime sınırları) | MIT |
-| [Açık Kuran](https://acikkuran.com) | Türkçe fonetik okunuş | CC BY-NC-SA 4.0 |
+## Ne Yapıyor?
+
+```
+1. QuranWBW'den kelime-kelime İngilizce heceleri alır
+     ["Maa-li-ki", "Yaw-mid-", "Deen"]
+
+2. Açık Kuran'ın Türkçe fonetik verisini kullanarak eşler
+     "maliki yevmid din"
+
+3. Needleman-Wunsch hizalama ile birleştirir
+     ["ma-li-ki", "yev-mid-", "din"]
+
+4. Arapça metinde kelimeye tıklayınca bubble ile okunuş gösterir
+5. Ayetin altında Diyanet İşleri meali yer alır
+```
+
+## Demo
+
+`demo/index.html` dosyasını bir HTTP sunucusu ile açın:
+
+```bash
+npx serve .
+# → http://localhost:3000/demo/
+```
+
+Demo özellikleri:
+- 114 sure, 6236 ayet
+- Arapça kelimeye tıkla, hecelenmiş Türkçe okunuşu gör
+- Diyanet İşleri meali
+- 3 tema: Papirus, Deniz, Gece
 
 ## Sorun
 
-QuranWBW İngilizce fonetik kullanır ve bazı sesler Türkçe'ye uygun değildir:
+**QuranWBW** İngilizce fonetik kullanır. Türkçe okunuş için uygun değildir:
 
 ```
-Yaw-mid-Deen    →  yanlış: "yav" yerine "yev" olmalı
-Raḥ-maa-nir     →  gereksiz özel karakterler: ḥ, ā
+yaw-mid-deen  →  Türkçe'de "yev-mid-din" olmalı
+Raḥ-maa-nir   →  özel karakterler gereksiz, "rah-ma-nir" yeterli
 ```
 
-Açık Kuran doğru Türkçe okunuş verir ama kelime-kelime hece yapısı yoktur:
+**Açık Kuran** doğru Türkçe okunuş verir ama kelime kelime hece yapısı yoktur:
 
 ```
-"maliki yevmid din"   →  düz metin, hece ayrımı yok
+"maliki yevmid din"  →  düz metin, hangi hece hangi kelimeye ait belli değil
 ```
 
 ## Çözüm
 
-Bu proje, **Needleman-Wunsch dizi hizalama algoritması** ile iki veriyi eşleştirir:
+**Needleman-Wunsch dizi hizalama algoritması** ile iki veriyi eşleştiriyoruz:
 
-1. Her iki metni ortak fonetik forma normalize eder
-2. Karakter bazlı hizalama ile QuranWBW kelime sınırlarını Türkçe metne uygular
-3. Hece yapısını koruyarak Türkçe transliterasyon üretir
+1. QuranWBW ve Açık Kuran metinlerini ortak fonetik forma normalize et
+2. Karakter bazlı hizalama ile QuranWBW'nin kelime sınırlarını Türkçe metne uygula
+3. Hece yapısını koruyarak Türkçe transliterasyon üret
 
-```
-QuranWBW:   ["Maa-li-ki",  "Yaw-mid-",  "Deen"]
-Açık Kuran: "maliki yevmid din"
-Sonuç:      ["Ma-li-ki",   "Yev-mid-",  "Din"]
-```
+## Hazır Veri
 
-## Kullanım
-
-### Hazır veri
-
-`output/turkish-syllables.json` dosyası 6236 ayetin tamamını içerir:
+`output/turkish-syllables.json` — 6236 ayetin tamamı:
 
 ```json
 {
-  "1:1": ["Bis-mil-", "la-hir-", "Rah-ma-nir-", "Ra-him"],
-  "1:2": ["El-ham-du", "Lil-la-hi", "Rab-bil-", "A-le-min"],
-  ...
+  "1:1": ["bis-mil-", "la-hir-", "rah-ma-nir-", "ra-him"],
+  "1:2": ["el-ham-du", "lil-la-hi", "rab-bil-", "a-le-min"],
+  "1:4": ["ma-li-ki", "yev-mid-", "din"]
 }
 ```
 
-### Programatik kullanım
+### Format
+
+- `"sure:ayet"` → kelime dizisi
+- Her kelime bir Arapça kelimeye karşılık gelir
+- Heceler `-` ile ayrılır
+- Sondaki `-` bir sonraki kelimeyle bağlantıyı gösterir (vasl)
+- Tamamı küçük harf
+
+## Programatik Kullanım
 
 ```js
 const { convertVerse } = require("kuran-turkce-satir-arasi");
@@ -61,7 +87,7 @@ const result = convertVerse(
   ["Maa-li-ki", "Yaw-mid-", "Deen"],  // QuranWBW heceleri
   "maliki yevmid din"                   // Türkçe fonetik
 );
-// → ["Ma-li-ki", "Yev-mid-", "Din"]
+// → ["ma-li-ki", "yev-mid-", "din"]
 ```
 
 ### Veriyi yeniden üretme
@@ -70,44 +96,38 @@ const result = convertVerse(
 node generate.js
 ```
 
-## Veri Formatı
-
-```
-"sure:ayet": ["kelime1", "kelime2", ...]
-```
-
-- Her kelime bir Arapça kelimeye karşılık gelir
-- Heceler `-` ile ayrılır
-- Sondaki `-` bir sonraki kelimeyle bağlantıyı gösterir (vasl)
-- İlk harf büyük yazılır
-
 ## Algoritma
 
-Detaylı açıklama için `src/` dizinine bakın:
-
-- **`normalize.js`** — QuranWBW ve Türkçe metni ortak forma dönüştürür
-- **`align.js`** — Needleman-Wunsch karakter hizalama
-- **`convert.js`** — Hizalamayı kullanarak kelime/hece sınırlarını Türkçe metne uygular
+| Dosya | Ne yapar |
+|-------|----------|
+| `src/normalize.js` | QuranWBW ve Türkçe metni ortak fonetik forma dönüştürür |
+| `src/align.js` | Needleman-Wunsch karakter hizalama |
+| `src/convert.js` | Hizalamayı kullanarak kelime/hece sınırlarını Türkçe metne uygular |
 
 ## Kaynaklar ve Teşekkür
 
-Bu proje aşağıdaki açık kaynak projelerin verileri üzerine inşa edilmiştir:
+| Kaynak | Kullanım | Lisans |
+|--------|----------|--------|
+| [QuranWBW](https://quranwbw.com) | Kelime-kelime İngilizce hece yapısı | MIT |
+| [Açık Kuran](https://acikkuran.com) | Türkçe fonetik ayet transliterasyonu | CC BY-NC-SA 4.0 |
+| [Mahfuz](https://github.com/Quirah/mahfuz) | Demo UI tasarımı ve Arapça metin verisi | - |
+| [Diyanet İşleri](https://www.diyanet.gov.tr) | Türkçe meal | - |
 
 ### QuranWBW
 - **Website:** https://quranwbw.com
-- **Lisans:** MIT
 - **Kullanılan veri:** Kelime-kelime hece yapısı (word-by-word syllable transliteration)
 
 ### Açık Kuran
 - **Website:** https://acikkuran.com
 - **GitHub:** https://github.com/nickaknew/acikkuran
-- **Lisans:** Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0)
 - **Kullanılan veri:** Türkçe fonetik ayet transliterasyonu
 
-> **Not:** Açık Kuran verisi CC BY-NC-SA 4.0 lisansı altındadır. Bu lisans ticari kullanımı kısıtlar. Ticari projeler için Açık Kuran'ın lisans şartlarını kontrol edin.
+### Mahfuz
+- **GitHub:** https://github.com/Quirah/mahfuz
+- **Kullanılan:** Demo arayüzü Mahfuz'un okuyucu bileşenlerinden (tema sistemi, kelime bubble mekanigi, ayet yerlesimi) ilham alinarak tasarlanmistir. Arapca Osmani metni Mahfuz veritabanindan alinmistir.
+
+> **Lisans notu:** Açık Kuran verisi CC BY-NC-SA 4.0 lisansı altındadır ve ticari kullanımı kısıtlar. Ticari projeler için lisans şartlarını kontrol edin.
 
 ## Lisans
 
-Bu projenin **kaynak kodu** MIT lisansı altındadır.
-
-**Veri dosyaları** kaynaklarının orijinal lisanslarına tabidir (yukarıya bakın).
+Kaynak kodu **MIT** lisansı altındadır. Veri dosyaları kaynaklarının orijinal lisanslarına tabidir.
