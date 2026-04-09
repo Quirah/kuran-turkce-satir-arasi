@@ -87,6 +87,33 @@
 
     .header select:focus { outline: 2px solid var(--color-accent); outline-offset: -1px; }
 
+    /* === Bubble Mode Toggle === */
+    .mode-toggle {
+      display: flex;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 12px;
+    }
+    .mode-btn {
+      padding: 5px 10px;
+      background: var(--color-bg);
+      color: var(--color-text-secondary);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mode-btn:not(:last-child) { border-right: 1px solid var(--color-border); }
+    .mode-btn:hover { color: var(--color-text-primary); }
+    .mode-btn.active {
+      background: var(--color-accent);
+      color: var(--color-bg);
+      font-weight: 600;
+    }
+
     .theme-buttons {
       margin-left: auto;
       display: flex;
@@ -105,6 +132,35 @@
     .theme-btn[data-t="sea"] { background: #eef3f2; }
     .theme-btn[data-t="night"] { background: #0f0e0c; }
     .theme-btn.active { border-color: var(--color-accent); border-width: 2.5px; }
+
+    /* === Text Size Controls === */
+    .size-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .size-btn {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-ui);
+      transition: background 0.15s;
+    }
+    .size-btn:hover { background: var(--color-word-hover); }
+    .size-label {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      min-width: 18px;
+      text-align: center;
+    }
 
     .github-link {
       color: var(--color-text-secondary);
@@ -184,10 +240,8 @@
     /* === Tooltip Bubble (like Mahfuz WordTooltip) === */
     .tooltip {
       display: none;
-      position: absolute;
+      position: fixed;
       z-index: 50;
-      left: 50%;
-      transform: translateX(-50%);
       padding: 6px 12px;
       border-radius: 8px;
       background: var(--color-surface);
@@ -207,11 +261,8 @@
       background: var(--color-surface);
       border-color: var(--color-border);
       transform: translateX(-50%) rotate(45deg);
-      left: 50%;
     }
-    .tooltip.pos-bottom { top: calc(100% + 8px); }
     .tooltip.pos-bottom .tooltip-arrow { top: -5px; border-left: 1px solid; border-top: 1px solid; }
-    .tooltip.pos-top { bottom: calc(100% + 8px); }
     .tooltip.pos-top .tooltip-arrow { bottom: -5px; border-right: 1px solid; border-bottom: 1px solid; }
 
     .tooltip-text {
@@ -259,6 +310,8 @@
     @media (max-width: 600px) {
       .header { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
       .header select { min-width: 0; flex: 1; }
+      .mode-toggle { order: 10; width: 100%; }
+      .mode-btn { flex: 1; text-align: center; }
       .theme-buttons { margin-left: 0; }
       .verse-arabic { font-size: 1.5rem; }
       .content { padding: 12px 12px 60px; }
@@ -272,6 +325,15 @@
 <div class="header">
   <h1>Kur'an Satir Arasi</h1>
   <select id="surahSelect"></select>
+  <div class="mode-toggle">
+    <button class="mode-btn active" data-mode="turkish">Turkce okunusa gore</button>
+    <button class="mode-btn" data-mode="arabic">Arapca kelimeye gore</button>
+  </div>
+  <div class="size-controls">
+    <button class="size-btn" id="sizeDown" title="Kucult">-</button>
+    <span class="size-label" id="sizeLabel">A</span>
+    <button class="size-btn" id="sizeUp" title="Buyut">+</button>
+  </div>
   <div class="theme-buttons">
     <button class="theme-btn active" data-t="papyrus" title="Papirus"></button>
     <button class="theme-btn" data-t="sea" title="Deniz"></button>
@@ -292,17 +354,21 @@ const surahMeta=[null,{id:1,arabic:'\u0627\u0644\u0641\u0627\u062a\u062d\u0629',
 let translitData = null;
 let arabicData = null;
 let mealData = null;
+let phoneticData = null;
 let currentSurah = 1;
+let currentMode = 'turkish'; // 'turkish' or 'arabic'
 
 async function loadData() {
-  const [translitRes, arabicRes, mealRes] = await Promise.all([
+  const [translitRes, arabicRes, mealRes, phoneticRes] = await Promise.all([
     fetch('../output/turkish-syllables.json'),
     fetch('../data/arabic-uthmani.json'),
     fetch('../data/diyanet-meal.json'),
+    fetch('../data/acikkuran-turkish-phonetic.json'),
   ]);
   translitData = await translitRes.json();
   arabicData = await arabicRes.json();
   mealData = await mealRes.json();
+  phoneticData = await phoneticRes.json();
   populateSurahSelect();
   renderSurah(currentSurah);
 }
@@ -322,11 +388,13 @@ function populateSurahSelect() {
   });
 }
 
-// Group words by trailing dash (vasl/connected words)
-function groupWords(arabicWords, translitWords) {
+// Group by Turkish reading words (Açık Kuran space-separated words)
+// Maps phonetic word boundaries to WBW word indices
+function groupByTurkish(arabicWords, translitWords) {
   if (!translitWords) return arabicWords.map((w, i) => ({
     arabic: [w], translit: '', indices: [i]
   }));
+  // Same as old groupWords — trailing dash means connected in Turkish reading
   const groups = [];
   let curAr = [], curTr = '', curIdx = [];
   for (let i = 0; i < translitWords.length; i++) {
@@ -343,8 +411,27 @@ function groupWords(arabicWords, translitWords) {
   return groups;
 }
 
+// Group by Arabic word — each WBW word = separate bubble
+function groupByArabic(arabicWords, translitWords) {
+  return arabicWords.map((w, i) => ({
+    arabic: [w],
+    translit: translitWords?.[i] || '',
+    indices: [i]
+  }));
+}
+
+function groupWords(arabicWords, translitWords) {
+  if (currentMode === 'arabic') return groupByArabic(arabicWords, translitWords);
+  return groupByTurkish(arabicWords, translitWords);
+}
+
 // Clean transliteration for tooltip display
 function cleanTranslit(text) {
+  if (currentMode === 'arabic') {
+    // Keep syllable dashes and trailing dash (shows connection to next word)
+    // Only remove punctuation
+    return text.replace(/[.;]/g, '');
+  }
   return text.replace(/-/g, '').replace(/[.;]/g, '');
 }
 
@@ -390,6 +477,9 @@ function renderSurah(surahNum) {
   content.querySelectorAll('.word').forEach(el => {
     el.addEventListener('click', handleWordClick);
   });
+
+  // Apply current text size
+  updateArabicSize();
 }
 
 // === Tooltip logic (like Mahfuz WordTooltip) ===
@@ -416,17 +506,35 @@ function handleWordClick(e) {
   text.textContent = translit;
   tooltip.appendChild(text);
 
-  word.appendChild(tooltip);
+  document.body.appendChild(tooltip);
   word.classList.add('active');
 
-  // Position: check space below
+  // Position: fixed, clamped to viewport
   const rect = word.getBoundingClientRect();
   const spaceBelow = window.innerHeight - rect.bottom;
-  if (spaceBelow < 80 && rect.top > 80) {
-    tooltip.classList.add('pos-top', 'show');
+  const posAbove = spaceBelow < 80 && rect.top > 80;
+
+  tooltip.classList.add(posAbove ? 'pos-top' : 'pos-bottom', 'show');
+
+  // Measure tooltip
+  const tipRect = tooltip.getBoundingClientRect();
+  const margin = 8;
+
+  // Vertical position
+  if (posAbove) {
+    tooltip.style.top = (rect.top - tipRect.height - margin) + 'px';
   } else {
-    tooltip.classList.add('pos-bottom', 'show');
+    tooltip.style.top = (rect.bottom + margin) + 'px';
   }
+
+  // Horizontal: center on word, clamp to viewport
+  let left = rect.left + rect.width / 2 - tipRect.width / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - tipRect.width - margin));
+  tooltip.style.left = left + 'px';
+
+  // Arrow position: point to word center
+  const arrowLeft = rect.left + rect.width / 2 - left;
+  arrow.style.left = Math.max(12, Math.min(arrowLeft, tipRect.width - 12)) + 'px';
 
   activeTooltip = { tooltip, word };
 }
@@ -444,6 +552,32 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeTooltip();
+});
+window.addEventListener('scroll', closeTooltip, { passive: true });
+
+// === Bubble Mode Toggle ===
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentMode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (translitData) renderSurah(currentSurah);
+  });
+});
+
+// === Arabic Text Size ===
+const sizeSizes = [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.5, 2.8];
+let sizeIndex = 3; // default 1.8rem
+function updateArabicSize() {
+  document.querySelectorAll('.verse-arabic').forEach(el => {
+    el.style.fontSize = sizeSizes[sizeIndex] + 'rem';
+  });
+}
+document.getElementById('sizeDown').addEventListener('click', () => {
+  if (sizeIndex > 0) { sizeIndex--; updateArabicSize(); }
+});
+document.getElementById('sizeUp').addEventListener('click', () => {
+  if (sizeIndex < sizeSizes.length - 1) { sizeIndex++; updateArabicSize(); }
 });
 
 // === Theme ===
