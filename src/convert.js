@@ -244,9 +244,8 @@ function convertVerse(wbwWords, turkishText) {
     // Reconstruct word
     let newWord = syllableTexts.join("-");
 
-    if (info.isCapitalized && newWord.length > 0) {
-      newWord = newWord.charAt(0).toUpperCase() + newWord.slice(1);
-    }
+    // Always lowercase
+    newWord = newWord.toLowerCase();
 
     if (info.trailingDash) newWord += "-";
     newWord += info.trailingPunct;
