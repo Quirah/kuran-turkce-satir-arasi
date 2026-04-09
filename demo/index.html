@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kur'an Turkce Satir Arasi Transliterasyon</title>
+  <style>
+    /* === Mahfuz-inspired Papyrus Theme === */
+    :root {
+      --bg: #f5efe0;
+      --bg-surface: #ece4d0;
+      --text: #2c2416;
+      --text-secondary: #7a6b52;
+      --accent: #8b6914;
+      --border: #d4c9ac;
+      --word-hover: rgba(139, 105, 20, 0.12);
+      --word-hover-text: #6b4c00;
+      --bubble-bg: #fffdf7;
+      --bubble-shadow: rgba(44, 36, 22, 0.12);
+      --font-arabic: "Scheherazade New", "Traditional Arabic", "Amiri", serif;
+      --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+
+    [data-theme="night"] {
+      --bg: #0f0e0c;
+      --bg-surface: #1a1814;
+      --text: #f0ece4;
+      --text-secondary: #a09882;
+      --accent: #7aad4a;
+      --border: #2e2a22;
+      --word-hover: rgba(122, 173, 74, 0.15);
+      --word-hover-text: #a4d474;
+      --bubble-bg: #1e1c18;
+      --bubble-shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="sea"] {
+      --bg: #eef3f2;
+      --bg-surface: #dce8e6;
+      --text: #1a2c28;
+      --text-secondary: #4a6b64;
+      --accent: #0d7377;
+      --border: #b8ccc8;
+      --word-hover: rgba(13, 115, 119, 0.12);
+      --word-hover-text: #0a5c5f;
+      --bubble-bg: #f5faf9;
+      --bubble-shadow: rgba(26, 44, 40, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* === Header === */
+    .header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .header select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      cursor: pointer;
+      max-width: 280px;
+    }
+
+    .theme-buttons {
+      margin-left: auto;
+      display: flex;
+      gap: 6px;
+    }
+
+    .theme-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .theme-btn:hover { transform: scale(1.15); }
+    .theme-btn[data-t="papyrus"] { background: #f5efe0; }
+    .theme-btn[data-t="sea"] { background: #eef3f2; }
+    .theme-btn[data-t="night"] { background: #0f0e0c; }
+    .theme-btn.active { border-color: var(--accent); border-width: 3px; }
+
+    /* === Content === */
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* === Verse Block === */
+    .verse {
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .verse-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    /* === Word Row === */
+    .words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      direction: rtl;
+      justify-content: center;
+      line-height: 2.8;
+    }
+
+    /* === Word Bubble === */
+    .word {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 4px 6px 2px;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    .word:hover {
+      background: var(--word-hover);
+    }
+
+    .word-arabic {
+      font-family: var(--font-arabic);
+      font-size: 28px;
+      line-height: 1.6;
+      color: var(--text);
+      direction: rtl;
+    }
+
+    .word-translit {
+      font-size: 12px;
+      font-style: italic;
+      color: var(--text-secondary);
+      line-height: 1.3;
+      margin-top: 2px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+
+    .word-translit .syl {
+      color: var(--text-secondary);
+    }
+
+    .word-translit .syl-sep {
+      color: var(--border);
+      margin: 0 0.5px;
+    }
+
+    /* === Tooltip (click to expand) === */
+    .word-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bubble-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 12px var(--bubble-shadow);
+      z-index: 50;
+      white-space: nowrap;
+      direction: ltr;
+    }
+
+    .word-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--border);
+    }
+
+    .word.active .word-tooltip {
+      display: block;
+    }
+
+    .tooltip-translit {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .tooltip-info {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    /* === Transliteration Full Line === */
+    .verse-translit-line {
+      direction: ltr;
+      text-align: center;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      line-height: 1.8;
+    }
+
+    /* === Loading === */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    /* === Responsive === */
+    @media (max-width: 600px) {
+      .header { flex-wrap: wrap; gap: 8px; }
+      .header h1 { font-size: 14px; }
+      .header select { max-width: 100%; flex: 1; }
+      .theme-buttons { margin-left: 0; }
+      .word-arabic { font-size: 24px; }
+      .content { padding: 16px 12px 60px; }
+    }
+
+    /* === GitHub link === */
+    .github-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .github-link:hover { color: var(--accent); }
+    .github-link svg { width: 16px; height: 16px; fill: currentColor; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+  <h1>Kur'an Satir Arasi</h1>
+  <select id="surahSelect"></select>
+  <div class="theme-buttons">
+    <button class="theme-btn active" data-t="papyrus" title="Papirus"></button>
+    <button class="theme-btn" data-t="sea" title="Deniz"></button>
+    <button class="theme-btn" data-t="night" title="Gece"></button>
+  </div>
+  <a class="github-link" href="https://github.com/Quirah/kuran-turkce-satir-arasi" target="_blank">
+    <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    GitHub
+  </a>
+</div>
+
+<div class="content" id="content">
+  <div class="loading">Veriler yukleniyor...</div>
+</div>
+
+<script>
+// === Surah metadata ===
+const surahMeta = [
+  null,
+  {id:1,arabic:'الفاتحة',name:'Fatiha',verses:7},
+  {id:2,arabic:'البقرة',name:'Bakara',verses:286},
+  {id:3,arabic:'آل عمران',name:'Al-i İmran',verses:200},
+  {id:4,arabic:'النساء',name:'Nisa',verses:176},
+  {id:5,arabic:'المائدة',name:'Maide',verses:120},
+  {id:6,arabic:'الأنعام',name:'En\'am',verses:165},
+  {id:7,arabic:'الأعراف',name:'A\'raf',verses:206},
+  {id:8,arabic:'الأنفال',name:'Enfal',verses:75},
+  {id:9,arabic:'التوبة',name:'Tevbe',verses:129},
+  {id:10,arabic:'يونس',name:'Yunus',verses:109},
+  {id:11,arabic:'هود',name:'Hud',verses:123},
+  {id:12,arabic:'يوسف',name:'Yusuf',verses:111},
+  {id:13,arabic:'الرعد',name:'Ra\'d',verses:43},
+  {id:14,arabic:'ابراهيم',name:'İbrahim',verses:52},
+  {id:15,arabic:'الحجر',name:'Hicr',verses:99},
+  {id:16,arabic:'النحل',name:'Nahl',verses:128},
+  {id:17,arabic:'الإسراء',name:'İsra',verses:111},
+  {id:18,arabic:'الكهف',name:'Kehf',verses:110},
+  {id:19,arabic:'مريم',name:'Meryem',verses:98},
+  {id:20,arabic:'طه',name:'Taha',verses:135},
+  {id:21,arabic:'الأنبياء',name:'Enbiya',verses:112},
+  {id:22,arabic:'الحج',name:'Hac',verses:78},
+  {id:23,arabic:'المؤمنون',name:'Mu\'minun',verses:118},
+  {id:24,arabic:'النور',name:'Nur',verses:64},
+  {id:25,arabic:'الفرقان',name:'Furkan',verses:77},
+  {id:26,arabic:'الشعراء',name:'Şuara',verses:227},
+  {id:27,arabic:'النمل',name:'Neml',verses:93},
+  {id:28,arabic:'القصص',name:'Kasas',verses:88},
+  {id:29,arabic:'العنكبوت',name:'Ankebut',verses:69},
+  {id:30,arabic:'الروم',name:'Rum',verses:60},
+  {id:31,arabic:'لقمان',name:'Lokman',verses:34},
+  {id:32,arabic:'السجدة',name:'Secde',verses:30},
+  {id:33,arabic:'الأحزاب',name:'Ahzab',verses:73},
+  {id:34,arabic:'سبإ',name:'Sebe',verses:54},
+  {id:35,arabic:'فاطر',name:'Fatır',verses:45},
+  {id:36,arabic:'يس',name:'Yasin',verses:83},
+  {id:37,arabic:'الصافات',name:'Saffat',verses:182},
+  {id:38,arabic:'ص',name:'Sad',verses:88},
+  {id:39,arabic:'الزمر',name:'Zumer',verses:75},
+  {id:40,arabic:'غافر',name:'Mu\'min',verses:85},
+  {id:41,arabic:'فصلت',name:'Fussilet',verses:54},
+  {id:42,arabic:'الشورى',name:'Şura',verses:53},
+  {id:43,arabic:'الزخرف',name:'Zuhruf',verses:89},
+  {id:44,arabic:'الدخان',name:'Duhan',verses:59},
+  {id:45,arabic:'الجاثية',name:'Casiye',verses:37},
+  {id:46,arabic:'الأحقاف',name:'Ahkaf',verses:35},
+  {id:47,arabic:'محمد',name:'Muhammed',verses:38},
+  {id:48,arabic:'الفتح',name:'Fetih',verses:29},
+  {id:49,arabic:'الحجرات',name:'Hucurat',verses:18},
+  {id:50,arabic:'ق',name:'Kaf',verses:45},
+  {id:51,arabic:'الذاريات',name:'Zariyat',verses:60},
+  {id:52,arabic:'الطور',name:'Tur',verses:49},
+  {id:53,arabic:'النجم',name:'Necm',verses:62},
+  {id:54,arabic:'القمر',name:'Kamer',verses:55},
+  {id:55,arabic:'الرحمن',name:'Rahman',verses:78},
+  {id:56,arabic:'الواقعة',name:'Vakıa',verses:96},
+  {id:57,arabic:'الحديد',name:'Hadid',verses:29},
+  {id:58,arabic:'المجادلة',name:'Mucadele',verses:22},
+  {id:59,arabic:'الحشر',name:'Haşr',verses:24},
+  {id:60,arabic:'الممتحنة',name:'Mumtehine',verses:13},
+  {id:61,arabic:'الصف',name:'Saf',verses:14},
+  {id:62,arabic:'الجمعة',name:'Cuma',verses:11},
+  {id:63,arabic:'المنافقون',name:'Munafikun',verses:11},
+  {id:64,arabic:'التغابن',name:'Tegabun',verses:18},
+  {id:65,arabic:'الطلاق',name:'Talak',verses:12},
+  {id:66,arabic:'التحريم',name:'Tahrim',verses:12},
+  {id:67,arabic:'الملك',name:'Mulk',verses:30},
+  {id:68,arabic:'القلم',name:'Kalem',verses:52},
+  {id:69,arabic:'الحاقة',name:'Hakka',verses:52},
+  {id:70,arabic:'المعارج',name:'Mearic',verses:44},
+  {id:71,arabic:'نوح',name:'Nuh',verses:28},
+  {id:72,arabic:'الجن',name:'Cin',verses:28},
+  {id:73,arabic:'المزمل',name:'Muzzemmil',verses:20},
+  {id:74,arabic:'المدثر',name:'Muddessir',verses:56},
+  {id:75,arabic:'القيامة',name:'Kıyame',verses:40},
+  {id:76,arabic:'الانسان',name:'İnsan',verses:31},
+  {id:77,arabic:'المرسلات',name:'Murselat',verses:50},
+  {id:78,arabic:'النبإ',name:'Nebe',verses:40},
+  {id:79,arabic:'النازعات',name:'Naziat',verses:46},
+  {id:80,arabic:'عبس',name:'Abese',verses:42},
+  {id:81,arabic:'التكوير',name:'Tekvir',verses:29},
+  {id:82,arabic:'الإنفطار',name:'İnfitar',verses:19},
+  {id:83,arabic:'المطففين',name:'Mutaffifin',verses:36},
+  {id:84,arabic:'الإنشقاق',name:'İnşikak',verses:25},
+  {id:85,arabic:'البروج',name:'Buruc',verses:22},
+  {id:86,arabic:'الطارق',name:'Tarık',verses:17},
+  {id:87,arabic:'الأعلى',name:'A\'la',verses:19},
+  {id:88,arabic:'الغاشية',name:'Gaşiye',verses:26},
+  {id:89,arabic:'الفجر',name:'Fecr',verses:30},
+  {id:90,arabic:'البلد',name:'Beled',verses:20},
+  {id:91,arabic:'الشمس',name:'Şems',verses:15},
+  {id:92,arabic:'الليل',name:'Leyl',verses:21},
+  {id:93,arabic:'الضحى',name:'Duha',verses:11},
+  {id:94,arabic:'الشرح',name:'İnşirah',verses:8},
+  {id:95,arabic:'التين',name:'Tin',verses:8},
+  {id:96,arabic:'العلق',name:'Alak',verses:19},
+  {id:97,arabic:'القدر',name:'Kadir',verses:5},
+  {id:98,arabic:'البينة',name:'Beyyine',verses:8},
+  {id:99,arabic:'الزلزلة',name:'Zilzal',verses:8},
+  {id:100,arabic:'العاديات',name:'Adiyat',verses:11},
+  {id:101,arabic:'القارعة',name:'Karia',verses:11},
+  {id:102,arabic:'التكاثر',name:'Tekasur',verses:8},
+  {id:103,arabic:'العصر',name:'Asr',verses:3},
+  {id:104,arabic:'الهمزة',name:'Humeze',verses:9},
+  {id:105,arabic:'الفيل',name:'Fil',verses:5},
+  {id:106,arabic:'قريش',name:'Kureyş',verses:4},
+  {id:107,arabic:'الماعون',name:'Maun',verses:7},
+  {id:108,arabic:'الكوثر',name:'Kevser',verses:3},
+  {id:109,arabic:'الكافرون',name:'Kafirun',verses:6},
+  {id:110,arabic:'النصر',name:'Nasr',verses:3},
+  {id:111,arabic:'المسد',name:'Tebbet',verses:5},
+  {id:112,arabic:'الإخلاص',name:'İhlas',verses:4},
+  {id:113,arabic:'الفلق',name:'Felak',verses:5},
+  {id:114,arabic:'الناس',name:'Nas',verses:6},
+];
+
+// === State ===
+let translitData = null;
+let arabicData = null;
+let currentSurah = 1;
+
+// === Load data ===
+async function loadData() {
+  const [translitRes, arabicRes] = await Promise.all([
+    fetch('../output/turkish-syllables.json'),
+    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani').then(r => r.json()),
+  ]);
+
+  translitData = await translitRes.json();
+
+  // Index Arabic text by "surah:ayah"
+  arabicData = {};
+  for (const ayah of arabicRes.data.surahs.flatMap(s => s.ayahs)) {
+    arabicData[`${ayah.surah.number}:${ayah.numberInSurah}`] = ayah.text;
+  }
+
+  populateSurahSelect();
+  renderSurah(currentSurah);
+}
+
+// === Surah selector ===
+function populateSurahSelect() {
+  const sel = document.getElementById('surahSelect');
+  for (let i = 1; i <= 114; i++) {
+    const s = surahMeta[i];
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${i}. ${s.name} - ${s.arabic}`;
+    sel.appendChild(opt);
+  }
+  sel.addEventListener('change', (e) => {
+    currentSurah = parseInt(e.target.value);
+    renderSurah(currentSurah);
+  });
+}
+
+// === Group words by trailing dash (vasl) ===
+function groupWords(arabicWords, translitWords) {
+  if (!translitWords) return arabicWords.map((w, i) => ({
+    arabic: [w], translit: '', indices: [i]
+  }));
+
+  const groups = [];
+  let currentArabic = [];
+  let currentTranslit = '';
+  let currentIndices = [];
+
+  for (let i = 0; i < translitWords.length; i++) {
+    const tw = translitWords[i];
+    const aw = arabicWords[i] || '';
+
+    currentArabic.push(aw);
+    currentIndices.push(i);
+
+    // Check if this word ends with dash (connects to next)
+    if (tw.endsWith('-') && i < translitWords.length - 1) {
+      currentTranslit += tw;
+    } else {
+      currentTranslit += tw;
+      groups.push({
+        arabic: [...currentArabic],
+        translit: currentTranslit,
+        indices: [...currentIndices]
+      });
+      currentArabic = [];
+      currentTranslit = '';
+      currentIndices = [];
+    }
+  }
+
+  // Remaining
+  if (currentArabic.length > 0) {
+    groups.push({
+      arabic: currentArabic,
+      translit: currentTranslit,
+      indices: currentIndices
+    });
+  }
+
+  return groups;
+}
+
+// === Format transliteration with styled syllables ===
+function formatTranslit(text) {
+  // Remove trailing connection dash for display, keep internal dashes as separators
+  let display = text.replace(/-$/, '');
+  // Split by dash, rejoin with styled separators
+  const parts = display.split('-');
+  return parts.map((p, i) =>
+    `<span class="syl">${p}</span>${i < parts.length - 1 ? '<span class="syl-sep">-</span>' : ''}`
+  ).join('');
+}
+
+// === Render surah ===
+function renderSurah(surahNum) {
+  const content = document.getElementById('content');
+  const meta = surahMeta[surahNum];
+
+  let html = '';
+
+  for (let v = 1; v <= meta.verses; v++) {
+    const key = `${surahNum}:${v}`;
+    const arabic = arabicData?.[key] || '';
+    const translit = translitData?.[key] || [];
+
+    // Split Arabic text into words
+    const arabicWords = arabic.split(/\s+/);
+    const groups = groupWords(arabicWords, translit);
+
+    html += `<div class="verse">`;
+    html += `<div class="verse-number">${v}</div>`;
+    html += `<div class="words">`;
+
+    for (const group of groups) {
+      const arabicText = group.arabic.join(' ');
+      const translitText = group.translit;
+      const cleanTranslit = translitText.replace(/-/g, '').replace(/[.;]/g, '');
+
+      html += `<div class="word" onclick="toggleWord(this)">`;
+      html += `<span class="word-arabic">${arabicText}</span>`;
+      html += `<span class="word-translit">${formatTranslit(translitText)}</span>`;
+      if (cleanTranslit) {
+        html += `<div class="word-tooltip">`;
+        html += `<div class="tooltip-translit">${cleanTranslit}</div>`;
+        html += `<div class="tooltip-info">${group.arabic.length} kelime</div>`;
+        html += `</div>`;
+      }
+      html += `</div>`;
+    }
+
+    html += `</div>`; // .words
+
+    // Full transliteration line
+    const fullTranslit = translit.join(' ').replace(/-/g, ' ').replace(/\s+/g, ' ').replace(/[.;]/g, '').trim();
+    if (fullTranslit) {
+      html += `<div class="verse-translit-line">${fullTranslit}</div>`;
+    }
+
+    html += `</div>`; // .verse
+  }
+
+  content.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+// === Word interaction ===
+function toggleWord(el) {
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('.word.active').forEach(w => w.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.word')) {
+    document.querySelectorAll('.word.active').forEach(w => w.classList.remove('active'));
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.word.active').forEach(w => w.classList.remove('active'));
+  }
+});
+
+// === Theme switching ===
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const theme = btn.dataset.t;
+    if (theme === 'papyrus') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// === Init ===
+loadData().catch(err => {
+  document.getElementById('content').innerHTML =
+    `<div class="loading">Veri yuklenemedi. Lütfen bir HTTP sunucusu uzerinden acin.<br><code>npx serve .</code></div>`;
+});
+</script>
+
+</body>
+</html>
