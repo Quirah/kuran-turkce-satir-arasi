@@ -1,66 +1,58 @@
-# Kur'an Türkçe Satır Arası
+# Kur'an Turkce Satir Arasi
 
-Kur'an-ı Kerim için **kelime kelime Türkçe okunuş** (transliterasyon) ve **meal** gösteren açık kaynak proje.
+Kur'an-i Kerim icin **kelime kelime Turkce okunus** gosteren Android uygulama ve acik kaynak algoritma.
 
-Arapça metinde herhangi bir kelimeye tıklayın, o kelimenin Türkçe okunuşunu hecelenmiş olarak görün.
+Arapca metinde herhangi bir kelimeye tiklayin, o kelimenin Turkce okunusunu hecelenmis olarak gorun.
 
-## Ne Yapıyor?
+## Kurulum (Obtainium)
+
+[Obtainium](https://obtainium.imranr.dev/) ile kurarsaniz yeni surum ciktiginda otomatik bildirim alirsiniz.
+
+1. Obtainium'u telefonunuza kurun
+2. **Add App** butonuna basin
+3. URL olarak su adresi girin:
+   ```
+   https://github.com/Quirah/kuran-turkce-satir-arasi
+   ```
+4. **Add** butonuna basin, uygulama otomatik indirilir ve kurulur
+
+### Manuel Kurulum
+
+[Releases](https://github.com/Quirah/kuran-turkce-satir-arasi/releases) sayfasindan son surumun APK dosyasini indirip telefonunuza kurun.
+
+## Ozellikler
+
+- **114 sure, 6236 ayet** — Kur'an-i Kerim'in tamami
+- **Sure secim ekrani** — Arama destegi, son okunan sure badge'i
+- **Kelime kelime okunus** — Arapca kelimeye tikla, hecelenmis Turkce okunusu gor
+- **Iki bubble modu:**
+  - *Turkce okunusa gore:* Turkce okuyusta birlesen kelimeler tek bubble (ornek: bismillahir)
+  - *Arapca kelimeye gore:* Her Arapca kelime ayri bubble, sondaki `-` devam isareti (ornek: bis-mil-)
+- **Diyanet Isleri meali** — Her ayetin altinda Turkce meal
+- **3 tema:** Papirus, Deniz, Gece
+- **Arapca yazi boyutu ayari** — 8 kademe buyutme/kucultme
+- **Son kalinan yer hafizasi** — Sure, scroll pozisyonu, tema, yazi boyutu ve bubble modu tercihi saklanir
+- **Tamamen offline** — Tum veri uygulama icinde, internet gerektirmez
+
+## Nasil Calisiyor?
 
 ```
-1. QuranWBW'den kelime-kelime İngilizce heceleri alır
+1. QuranWBW'den kelime-kelime Ingilizce heceleri alinir
      ["Maa-li-ki", "Yaw-mid-", "Deen"]
 
-2. Açık Kuran'ın Türkçe fonetik verisini kullanarak eşler
+2. Acik Kuran'in Turkce fonetik verisiyle eslestirilir
      "maliki yevmid din"
 
-3. Needleman-Wunsch hizalama ile birleştirir
+3. Needleman-Wunsch hizalama algoritmasi ile birlestirilir
      ["ma-li-ki", "yev-mid-", "din"]
 
-4. Arapça metinde kelimeye tıklayınca bubble ile okunuş gösterir
-5. Ayetin altında Diyanet İşleri meali yer alır
+4. Arapca metinde kelimeye tiklaninca bubble ile okunus gosterilir
+5. Ayetin altinda Diyanet Isleri meali yer alir
 ```
 
-## Demo
+## Hazir Veri
 
-`demo/index.html` dosyasını bir HTTP sunucusu ile açın:
-
-```bash
-npx serve .
-# → http://localhost:3000/demo/
-```
-
-Demo özellikleri:
-- 114 sure, 6236 ayet
-- Arapça kelimeye tıkla, hecelenmiş Türkçe okunuşu gör
-- Diyanet İşleri meali
-- 3 tema: Papirus, Deniz, Gece
-
-## Sorun
-
-**QuranWBW** İngilizce fonetik kullanır. Türkçe okunuş için uygun değildir:
-
-```
-yaw-mid-deen  →  Türkçe'de "yev-mid-din" olmalı
-Raḥ-maa-nir   →  özel karakterler gereksiz, "rah-ma-nir" yeterli
-```
-
-**Açık Kuran** doğru Türkçe okunuş verir ama kelime kelime hece yapısı yoktur:
-
-```
-"maliki yevmid din"  →  düz metin, hangi hece hangi kelimeye ait belli değil
-```
-
-## Çözüm
-
-**Needleman-Wunsch dizi hizalama algoritması** ile iki veriyi eşleştiriyoruz:
-
-1. QuranWBW ve Açık Kuran metinlerini ortak fonetik forma normalize et
-2. Karakter bazlı hizalama ile QuranWBW'nin kelime sınırlarını Türkçe metne uygula
-3. Hece yapısını koruyarak Türkçe transliterasyon üret
-
-## Hazır Veri
-
-`output/turkish-syllables.json` — 6236 ayetin tamamı:
+`output/turkish-syllables.json` — 6236 ayetin tamami:
 
 ```json
 {
@@ -72,25 +64,25 @@ Raḥ-maa-nir   →  özel karakterler gereksiz, "rah-ma-nir" yeterli
 
 ### Format
 
-- `"sure:ayet"` → kelime dizisi
-- Her kelime bir Arapça kelimeye karşılık gelir
-- Heceler `-` ile ayrılır
-- Sondaki `-` bir sonraki kelimeyle bağlantıyı gösterir (vasl)
-- Tamamı küçük harf
+- `"sure:ayet"` -> kelime dizisi
+- Her kelime bir Arapca kelimeye karsilik gelir
+- Heceler `-` ile ayrilir
+- Sondaki `-` bir sonraki kelimeyle baglantiyi gosterir (vasl)
+- Tamami kucuk harf
 
-## Programatik Kullanım
+## Programatik Kullanim
 
 ```js
 const { convertVerse } = require("kuran-turkce-satir-arasi");
 
 const result = convertVerse(
   ["Maa-li-ki", "Yaw-mid-", "Deen"],  // QuranWBW heceleri
-  "maliki yevmid din"                   // Türkçe fonetik
+  "maliki yevmid din"                   // Turkce fonetik
 );
-// → ["ma-li-ki", "yev-mid-", "din"]
+// -> ["ma-li-ki", "yev-mid-", "din"]
 ```
 
-### Veriyi yeniden üretme
+### Veriyi yeniden uretme
 
 ```bash
 node generate.js
@@ -100,34 +92,21 @@ node generate.js
 
 | Dosya | Ne yapar |
 |-------|----------|
-| `src/normalize.js` | QuranWBW ve Türkçe metni ortak fonetik forma dönüştürür |
+| `src/normalize.js` | QuranWBW ve Turkce metni ortak fonetik forma donusturur |
 | `src/align.js` | Needleman-Wunsch karakter hizalama |
-| `src/convert.js` | Hizalamayı kullanarak kelime/hece sınırlarını Türkçe metne uygular |
+| `src/convert.js` | Hizalamayi kullanarak kelime/hece sinirlarini Turkce metne uygular |
 
-## Kaynaklar ve Teşekkür
+## Kaynaklar ve Tesekkur
 
-| Kaynak | Kullanım | Lisans |
+| Kaynak | Kullanim | Lisans |
 |--------|----------|--------|
-| [QuranWBW](https://quranwbw.com) | Kelime-kelime İngilizce hece yapısı | MIT |
-| [Açık Kuran](https://acikkuran.com) | Türkçe fonetik ayet transliterasyonu | CC BY-NC-SA 4.0 |
-| [Mahfuz](https://github.com/Quirah/mahfuz) | Demo UI tasarımı ve Arapça metin verisi | - |
-| [Diyanet İşleri](https://www.diyanet.gov.tr) | Türkçe meal | - |
+| [QuranWBW](https://quranwbw.com) | Kelime-kelime Ingilizce hece yapisi | MIT |
+| [Acik Kuran](https://acikkuran.com) | Turkce fonetik ayet transliterasyonu | CC BY-NC-SA 4.0 |
+| [Mahfuz](https://github.com/Quirah/mahfuz) | Demo UI tasarimi ve Arapca metin verisi | - |
+| [Diyanet Isleri](https://www.diyanet.gov.tr) | Turkce meal | - |
 
-### QuranWBW
-- **Website:** https://quranwbw.com
-- **Kullanılan veri:** Kelime-kelime hece yapısı (word-by-word syllable transliteration)
-
-### Açık Kuran
-- **Website:** https://acikkuran.com
-- **GitHub:** https://github.com/nickaknew/acikkuran
-- **Kullanılan veri:** Türkçe fonetik ayet transliterasyonu
-
-### Mahfuz
-- **GitHub:** https://github.com/Quirah/mahfuz
-- **Kullanılan:** Demo arayüzü Mahfuz'un okuyucu bileşenlerinden (tema sistemi, kelime bubble mekanigi, ayet yerlesimi) ilham alinarak tasarlanmistir. Arapca Osmani metni Mahfuz veritabanindan alinmistir.
-
-> **Lisans notu:** Açık Kuran verisi CC BY-NC-SA 4.0 lisansı altındadır ve ticari kullanımı kısıtlar. Ticari projeler için lisans şartlarını kontrol edin.
+> **Lisans notu:** Acik Kuran verisi CC BY-NC-SA 4.0 lisansi altindadir ve ticari kullanimi kisitlar. Ticari projeler icin lisans sartlarini kontrol edin.
 
 ## Lisans
 
-Kaynak kodu **MIT** lisansı altındadır. Veri dosyaları kaynaklarının orijinal lisanslarına tabidir.
+Kaynak kodu **MIT** lisansi altindadir. Veri dosyalari kaynaklarinin orijinal lisanslarina tabidir.
