@@ -19,6 +19,7 @@
       --font-arabic: "Shaikh Hamdullah Mushaf", "Scheherazade New", "Traditional Arabic", serif;
       --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
       --arabic-size: 1.8rem;
+      --translit-size: 0.95rem;
     }
 
     [data-theme="sea"] {
@@ -292,8 +293,8 @@
     .word {
       display: inline;
       position: relative;
-      border-radius: 3px;
-      padding: 0 0.08em;
+      border-radius: 4px;
+      padding: 0.12em 0.1em;
       cursor: pointer;
       transition: background 0.15s ease, color 0.15s ease;
     }
@@ -347,7 +348,7 @@
     .tooltip.pos-bottom .tooltip-arrow { top: -5px; border-left: 1px solid; border-top: 1px solid; }
     .tooltip.pos-top .tooltip-arrow { bottom: -5px; border-right: 1px solid; border-bottom: 1px solid; }
     .tooltip-text {
-      font-size: 0.95rem;
+      font-size: var(--translit-size);
       font-family: var(--font-ui);
       font-weight: 500;
       letter-spacing: 0.02em;
@@ -486,11 +487,76 @@
       overflow: hidden;
     }
 
+    /* ===================== WBW MODE ===================== */
+    .verse-wbw {
+      direction: rtl;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 14px 18px;
+      padding: 10px 4px 6px;
+    }
+    .wbw-word {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .wbw-word:hover {
+      background: var(--color-word-hover);
+    }
+    .wbw-arabic {
+      font-family: var(--font-arabic);
+      font-size: calc(var(--arabic-size) * 0.95);
+      color: var(--color-text-primary);
+      line-height: 1.9;
+      direction: rtl;
+    }
+    .wbw-translit {
+      direction: ltr;
+      font-family: var(--font-ui);
+      font-size: var(--translit-size);
+      font-style: italic;
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+    .wbw-meaning {
+      direction: ltr;
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--color-text-translation);
+      margin-top: 2px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .verse-wbw .ayah-badge-wbw {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--color-surface);
+      color: var(--color-accent);
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      align-self: center;
+      margin: 0 4px;
+    }
+
     /* ===================== RESPONSIVE ===================== */
     @media (max-width: 600px) {
       .reader-header { padding: 6px 8px; gap: 6px; }
       .mode-btn { padding: 4px 6px; font-size: 10px; }
       .content { padding: 8px 10px 60px; }
+      .verse-wbw { gap: 10px 12px; }
+      .wbw-arabic { font-size: calc(var(--arabic-size) * 0.85); }
+      .wbw-meaning { font-size: 0.72rem; }
     }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -539,6 +605,7 @@
     <div class="mode-toggle">
       <button class="mode-btn active" data-mode="turkish">Turkce</button>
       <button class="mode-btn" data-mode="arabic">Arapca</button>
+      <button class="mode-btn" data-mode="wbw">Kelime</button>
     </div>
     <button class="settings-btn" data-action="openSettings" aria-label="Ayarlar">
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
@@ -609,6 +676,15 @@
         <button class="size-slider-btn" id="sizeUp">+</button>
       </div>
     </div>
+
+    <div class="setting-group">
+      <div class="setting-label">Fonetik Yazi Boyutu</div>
+      <div class="size-slider-row">
+        <button class="size-slider-btn" id="translitDown">-</button>
+        <div class="size-preview" id="translitPreview" style="font-family:var(--font-ui);font-style:italic">besmele</div>
+        <button class="size-slider-btn" id="translitUp">+</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -624,6 +700,7 @@ let arabicAcikkuranData = null;
 let arabicData = null;
 let mealData = null;
 let phoneticData = null;
+let wbwMeaningsData = null;
 let currentSurah = 1;
 let currentMode = 'turkish';
 let currentLevel = 'basic'; // 'basic' or 'tajweed'
@@ -656,6 +733,17 @@ function applySize() {
   savePrefs({ sizeIndex });
 }
 
+// === Translit Size ===
+const translitSizes = [0.75, 0.85, 0.95, 1.05, 1.2, 1.35, 1.5];
+let translitIndex = 2;
+
+function applyTranslitSize() {
+  document.documentElement.style.setProperty('--translit-size', translitSizes[translitIndex] + 'rem');
+  const preview = document.getElementById('translitPreview');
+  if (preview) preview.style.fontSize = translitSizes[translitIndex] + 'rem';
+  savePrefs({ translitIndex });
+}
+
 // === Theme ===
 let currentTheme = 'papyrus';
 function applyTheme(theme) {
@@ -670,13 +758,14 @@ function applyTheme(theme) {
 
 // === Data Loading ===
 async function loadData() {
-  const [translitRes, tajweedRes, arabicRes, arabicAkRes, mealRes, phoneticRes] = await Promise.all([
-    fetch('output/turkish-syllables.json'),
-    fetch('output/turkish-syllables-tajweed.json'),
-    fetch('data/arabic-uthmani.json?v=2'),
-    fetch('data/arabic-acikkuran.json'),
-    fetch('data/diyanet-meal.json'),
-    fetch('data/acikkuran-turkish-phonetic.json'),
+  const [translitRes, tajweedRes, arabicRes, arabicAkRes, mealRes, phoneticRes, wbwMeaningsRes] = await Promise.all([
+    fetch('../output/turkish-syllables.json'),
+    fetch('../output/turkish-syllables-tajweed.json'),
+    fetch('../data/arabic-uthmani.json?v=2'),
+    fetch('../data/arabic-acikkuran.json'),
+    fetch('../data/diyanet-meal.json'),
+    fetch('../data/acikkuran-turkish-phonetic.json'),
+    fetch('../data/wbw-turkish-meanings.json'),
   ]);
   translitData = await translitRes.json();
   translitTajweedData = await tajweedRes.json();
@@ -685,6 +774,7 @@ async function loadData() {
   arabicData = currentSource === 'acikkuran' ? arabicAcikkuranData : arabicUthmaniData;
   mealData = await mealRes.json();
   phoneticData = await phoneticRes.json();
+  wbwMeaningsData = await wbwMeaningsRes.json();
 }
 
 function applySource(source) {
@@ -814,18 +904,34 @@ function renderSurah(surahNum) {
     const activeData = currentLevel === 'tajweed' ? translitTajweedData : translitData;
     const translit = activeData?.[key] || [];
     const arabicWords = arabic.split(' ');
-    const groups = groupWords(arabicWords, translit);
 
     html += `<div class="verse" data-verse="${v}">`;
-    html += '<div class="verse-arabic">';
-    for (const group of groups) {
-      const arText = group.arabic.join(' ');
-      const trText = group.translit;
-      const clean = cleanTranslit(trText);
-      html += `<span class="word" data-translit="${clean.replace(/"/g, '&quot;')}">${arText}</span> `;
+
+    if (currentMode === 'wbw') {
+      const groups = groupByTurkish(arabicWords, translit);
+      html += '<div class="verse-wbw">';
+      for (const group of groups) {
+        const arText = group.arabic.join(' ');
+        const clean = cleanTranslit(group.translit).replace(/-/g, '');
+        html += `<div class="wbw-word">`;
+        html += `<div class="wbw-arabic">${arText}</div>`;
+        html += `<div class="wbw-translit">${clean}</div>`;
+        html += `</div>`;
+      }
+      html += `<span class="ayah-badge-wbw">${v}</span>`;
+      html += '</div>';
+    } else {
+      const groups = groupWords(arabicWords, translit);
+      html += '<div class="verse-arabic">';
+      for (const group of groups) {
+        const arText = group.arabic.join(' ');
+        const trText = group.translit;
+        const clean = cleanTranslit(trText);
+        html += `<span class="word" data-translit="${clean.replace(/"/g, '&quot;')}">${arText}</span> `;
+      }
+      html += `<span class="ayah-badge">${v}</span>`;
+      html += '</div>';
     }
-    html += `<span class="ayah-badge">${v}</span>`;
-    html += '</div>';
 
     const meal = mealData?.[key];
     if (meal) {
@@ -931,6 +1037,7 @@ document.querySelectorAll('[data-action="openSettings"]').forEach(btn => {
   btn.addEventListener('click', () => {
     overlay.classList.add('open');
     applySize(); // refresh preview
+    applyTranslitSize();
   });
 });
 overlay.addEventListener('click', (e) => {
@@ -967,12 +1074,21 @@ document.getElementById('sizeUp').addEventListener('click', () => {
   if (sizeIndex < sizeSizes.length - 1) { sizeIndex++; applySize(); }
 });
 
+// Translit size
+document.getElementById('translitDown').addEventListener('click', () => {
+  if (translitIndex > 0) { translitIndex--; applyTranslitSize(); }
+});
+document.getElementById('translitUp').addEventListener('click', () => {
+  if (translitIndex < translitSizes.length - 1) { translitIndex++; applyTranslitSize(); }
+});
+
 // === Init ===
 (async function init() {
   // Restore preferences
   const prefs = loadPrefs();
   if (prefs.theme) applyTheme(prefs.theme);
   if (prefs.sizeIndex != null) sizeIndex = prefs.sizeIndex;
+  if (prefs.translitIndex != null) translitIndex = prefs.translitIndex;
   if (prefs.mode) {
     currentMode = prefs.mode;
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === currentMode));
@@ -986,6 +1102,7 @@ document.getElementById('sizeUp').addEventListener('click', () => {
     document.querySelectorAll('.source-option').forEach(b => b.classList.toggle('active', b.dataset.source === currentSource));
   }
   applySize();
+  applyTranslitSize();
 
   // Search
   document.getElementById('surahSearch').addEventListener('input', (e) => {
