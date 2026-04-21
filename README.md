@@ -142,3 +142,4 @@ Veri lisansları kaynak sağlayıcılarına aittir (Tanzil, QuranWBW, Açık Kur
 - [quranwbw.com](https://quranwbw.com) — kelime bazlı heceleme, sayfa/cüz indeksi
 - [acikkuran.com](https://acikkuran.com) — Türkçe okunuş, Diyanet meali
 - [Tanzil](https://tanzil.net) — Uthmânî Mushaf metni
+- [Mahfuz](https://mahfuz.ilg.az/about) — UI esini

@@ -1062,8 +1062,9 @@ function renderSurah(surahNum) {
       html += '<div class="verse-wbw">';
       for (const group of groups) {
         const arText = group.arabic.join(' ');
-        const clean = syllabify(cleanTranslit(group.translit).replace(/-/g, ''));
-        html += `<div class="wbw-word">`;
+        // Syllabify each word separately (split on idgam/word-boundary dashes first)
+        const clean = cleanTranslit(group.translit).split('-').map(w => w ? syllabifyWord(w) : '').join('-');
+        html += `<div class="wbw-word" data-verse-ref="${v}">`;
         html += `<div class="wbw-arabic">${arText}</div>`;
         html += `<div class="wbw-translit">${clean}</div>`;
         html += `</div>`;
@@ -1094,6 +1095,16 @@ function renderSurah(surahNum) {
   content.querySelectorAll('.word').forEach(el => {
     el.addEventListener('click', handleWordClick);
   });
+  content.querySelectorAll('.wbw-word').forEach(el => {
+    el.addEventListener('click', handleWbwWordClick);
+  });
+}
+
+function handleWbwWordClick(e) {
+  const verseEl = e.currentTarget.closest('.verse');
+  if (!verseEl) return;
+  const v = parseInt(verseEl.dataset.verse);
+  if (v) savePrefs({ lastSurah: currentSurah, lastVerse: v });
 }
 
 // === Tooltip ===
